@@ -1,0 +1,11 @@
+// convex/auth.config.js
+
+export default {
+  providers:[
+    {
+      type: "clerk",
+   issuer:process.env.CLERK_JWT_ISSUER_DOMAIN,
+      applicationID:"convex",
+    },
+  ],
+};
