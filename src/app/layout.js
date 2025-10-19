@@ -10,6 +10,9 @@ import {ConvexClientProvider} from "./ConvexClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark, shadesOfPurple } from "@clerk/themes";
 
+//sidebar
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 //fronted
 import Header from "@/components/Header";
 
@@ -25,7 +28,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="white"
             enableSystem
             disableTransitionOnChange
           >
@@ -34,14 +37,16 @@ export default function RootLayout({ children }) {
           }}>
 
               <ConvexClientProvider>
-                
-               {/* Header */}
+                 <SidebarProvider>
+      <AppSidebar />
                <Header/>
                {/* //header close  */}
+               <SidebarTrigger />
                <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">    
+               {/* <main className="min-h-screen  overflow-x-hidden">     */}
                {children}
                </main>
-
+</SidebarProvider>
               </ConvexClientProvider>
           </ClerkProvider>
           </ThemeProvider>
