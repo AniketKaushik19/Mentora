@@ -37,12 +37,14 @@ const items = [
 
 export function AppSidebar() {
   return (
+    // <aside className="w-64 h-screen bg-gray-800 text-white fixed top-0 left-0 z-40">
+    
     <Sidebar >
       <SidebarContent className="bg-gray-400">
         <SidebarGroup>
           
           <SidebarGroupLabel>
-            <h2 class="text-4xl font-bold bg-gradient-to-r from-red-400 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-red-400 to-pink-600 bg-clip-text text-transparent">
   Mentora
 </h2>
             </SidebarGroupLabel>
@@ -63,5 +65,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
+    // </aside>
   )
 }

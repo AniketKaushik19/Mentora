@@ -39,18 +39,14 @@ export default function RootLayout({ children }) {
               <ConvexClientProvider>
                  <SidebarProvider>
       <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        {children}
-      </main>
-    </SidebarProvider>
-               {/* Header */}
                <Header/>
                {/* //header close  */}
+               <SidebarTrigger />
                <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">    
+               {/* <main className="min-h-screen  overflow-x-hidden">     */}
                {children}
                </main>
-
+</SidebarProvider>
               </ConvexClientProvider>
           </ClerkProvider>
           </ThemeProvider>
