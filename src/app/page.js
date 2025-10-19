@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import WelcomeBanner from "./dashboard/_components/WelcomeBanner";
 
 export default function Home() {
   return (
-    <div>
-       <Button variant={'primary'}>hello subcribe gameer kinnng</Button>
+    <div className="px-20 my-20">
+     <WelcomeBanner/>
     </div>
   );
 }
