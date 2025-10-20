@@ -28,9 +28,12 @@ export const store = mutation({
     }
     // If it's a new identity, create a new `User`.
     return await ctx.db.insert("users", {
-      name: identity.name ?? "Anonymous",
-      tokenIdentifier: identity.tokenIdentifier,
-    });
+    name: identity.name ?? "Anonymous",
+    email: identity.email ?? "not available",
+    tokenIdentifier: identity.tokenIdentifier,
+    imageUrl: identity.pictureUrl ?? null, // Clerk's profile image
+    lastActiveAt: Date.now(),
+});
   },
 });
 
