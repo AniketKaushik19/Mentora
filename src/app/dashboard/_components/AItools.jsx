@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 function AItools() {
    const aiTools = [
-  {path:"/qachat",
+  {path:"/ai-tools/ai-chats",
     title: "AI Career Q&A Chat",
     subtitle: "Chat with AI Agent",
     buttonLabel: "Let's Chat",
