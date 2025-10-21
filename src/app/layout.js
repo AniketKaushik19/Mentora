@@ -15,6 +15,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 //fronted
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const inter=Inter({subsets:['latin']});
 export const metadata = {
@@ -28,7 +29,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="white"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
@@ -37,19 +38,20 @@ export default function RootLayout({ children }) {
           }}>
 
               <ConvexClientProvider>
-                 <SidebarProvider>
-      <AppSidebar />
+                 {/* <SidebarProvider> */}
+      {/* <AppSidebar /> */}
                <Header/>
                {/* //header close  */}
-               <SidebarTrigger />
+               {/* <SidebarTrigger /> */}
                <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">    
                {/* <main className="min-h-screen  overflow-x-hidden">     */}
                {children}
                </main>
-</SidebarProvider>
+{/* </SidebarProvider> */}
               </ConvexClientProvider>
           </ClerkProvider>
           </ThemeProvider>
+          <Footer/>
       </body>
     </html>
   );
