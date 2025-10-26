@@ -41,6 +41,11 @@ import { LayoutDashboard } from 'lucide-react'
             >
                Features
             </Link>
+            <Link href="/community"
+                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
+            >
+               Community
+            </Link>
             {/* <Link 
                href="testimonials"
                className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
@@ -52,8 +57,8 @@ import { LayoutDashboard } from 'lucide-react'
 
       <div className='flex items-center gap-2 sm:gap-3 flex-shrink-0'>
         <Authenticated>
-           <Link href={"/dashboard"}>
-              <Button variant={"outline"} className={"hidden sm:flex"} size={"sm"}>
+           <Link href={"/community/dashboard"}>
+              <Button variant={"outline"} className={"hidden sm:flex cursor-pointer"} size={"sm"}>
                  <LayoutDashboard className='h-4 w-4'/>
                  <span className='hidden md:inline ml-2'>Dashboard</span>
               </Button>

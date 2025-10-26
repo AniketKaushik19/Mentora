@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 //fronted
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Toaster } from "sonner";
 
 const inter=Inter({subsets:['latin']});
 export const metadata = {
@@ -51,6 +52,7 @@ export default function RootLayout({ children }) {
               </ConvexClientProvider>
           </ClerkProvider>
           </ThemeProvider>
+          <Toaster richColors/>
           <Footer/>
       </body>
     </html>
