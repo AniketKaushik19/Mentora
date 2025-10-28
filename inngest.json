@@ -1,0 +1,4 @@
+{
+  "framework": "nextjs",
+  "root": "./src/app/api/inngest/route.js"
+}

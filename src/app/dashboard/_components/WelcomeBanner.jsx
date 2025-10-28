@@ -3,6 +3,7 @@ import React from 'react'
 
 
 function WelcomeBanner() {
+
   return (
     <>
     <div className='bg-gradient-to-r from-red-600  to-purple-500 p-3 rounded  text-white'>

@@ -4,13 +4,18 @@ import { Button } from "@/components/ui/button";
 import { features } from "@/lib/data";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,Card } from "@/components/ui/card";
+import WelcomeBanner from "./dashboard/_components/WelcomeBanner";
+import AItools from "./dashboard/_components/AItools";
+import PrevHistory from "./dashboard/_components/PrevHistory";
 
 export default function Home() {
  
   return (
-    <div></div>
+    <div className="my-20 px-10 py-3">
+       <WelcomeBanner/>
+       <AItools/>
+       <PrevHistory/>
+
+    </div>
   );
 }

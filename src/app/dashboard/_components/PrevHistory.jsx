@@ -13,7 +13,7 @@ function PrevHistory() {
 <h2 className='text-gray-500 text-sm'> What your previously work on , You can find here</h2>
 {userHistory?.length == 0 && 
 <div className='flex flex-col items-center justify-center mt-5 '>
-  <Image src={"/file.svg"} alt='bulb' width={50} height={50}/>
+  <Image src={"/resume.png"} alt='bulb' width={50} height={50}/>
   <h2>You do not have any history</h2>
   <Button className="my-1">Explore AI Tools</Button>
 </div>
