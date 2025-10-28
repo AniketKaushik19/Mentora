@@ -114,35 +114,34 @@ const PostEditorContent = ({form ,setQuillRef , onImageUpload}) => {
  }
   return (
     <>
-    <main className='max-w-4xl mx-auto px-6 py-8'>
-       <div className='space-y-5'>
-           {/* featured image  */}
-      { watchedValues.featuredImage?(
-         <div>
-            <img 
-              src={watchedValues.featuredImage} 
-              alt="featured"
-              className='w-full h-80 object-cover rounded-xl'
-             />
-             <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center space-x-3'>
-                <Button 
-                  onClick={()=>onImageUpload("featured")}
-                  variant={"secondary"}
-                  size={"sm"}
+    <main className="max-w-4xl mx-auto px-6 py-8">
+        <div className="space-y-5">
+          {/* Featured Image */}
+          {watchedValues.featuredImage ? (
+            <div className="relative group">
+              <img
+                src={watchedValues.featuredImage}
+                alt="Featured"
+                className="w-full h-80 object-cover rounded-xl"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center space-x-3">
+                <Button
+                  onClick={() => onImageUpload("featured")}
+                  variant="secondary"
+                  size="sm"
                 >
-                   Change Image
+                  Change Image
                 </Button>
-
-                <Button 
-                  onClick={()=>setValue("featuredImage","")}
-                  variant={"destructive"}
-                  size={"sm"}
+                <Button
+                  onClick={() => setValue("featuredImage", "")}
+                  variant="destructive"
+                  size="sm"
                 >
                   Remove
                 </Button>
-             </div>
-         </div>
-      ): 
+              </div>
+            </div>
+          ) : 
        (<button
              onClick={()=>onImageUpload("featured")}
              className='w-full h-36 border-2 border-dashed border-slate-600 rounded-xl flex flex-col items-center justify-center space-y-4 hover:border-slate-500 transition-colors group '

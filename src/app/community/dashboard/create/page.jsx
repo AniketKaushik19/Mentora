@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import PostEditor from '../../_components/PostEditor'
 const CreatePost = () => {
-  const {data:existingDraft, isLoading:isDraftLoading}=useConvexQuery(api.post.getUserDraft)
+  const {data:existingDraft, isLoading:isDraftLoading}=useConvexQuery(api.posts.getUserDraft)
 
   const {data:currentUser , isLoading:userLoading}=useConvexQuery(api.users.getCurrentUser)
 

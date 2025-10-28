@@ -28,9 +28,9 @@ const PostEditor = ({initialData=null , mode="create" }) => {
     const [quillRef , setQuillRef]=useState(null)
 
     const router = useRouter()
-    const {mutate:createPost , isLoading:isCreateLoading}=useConvexMutation(api.post.create);
+    const {mutate:createPost , isLoading:isCreateLoading}=useConvexMutation(api.posts.create);
 
-    const {mutate:updatePost , isLoading:isUpdating} = useConvexMutation(api.post.update)
+    const {mutate:updatePost , isLoading:isUpdating} = useConvexMutation(api.posts.update)
 
     const form= useForm({
         resolver:zodResolver(postSchema),
@@ -94,7 +94,7 @@ const PostEditor = ({initialData=null , mode="create" }) => {
           if(!silent){
              const message=action==="publish" ? "Post published!" : "Draft saved!"
              toast.success(message);
-             if(action==="publish") router.push("/dashboard/posts")
+             if(action==="publish") router.push("/community/dashboard/posts")
           }
           
           return resultId
@@ -119,7 +119,19 @@ const PostEditor = ({initialData=null , mode="create" }) => {
     }
 
     const handleImageSelect=(imageData)=>{
+         if(imageModalType=="featured"){
+             setValue("featuredImage" , imageData.url)
+             toast.success("Featured image added!")
+         }else if(imageModalType=="content" && quillRef){
+            const quill=quillRef.getEditor()
+            const range=quill.getSelection()
+            const index=range ? range.index :quill.getLength()
 
+            quill.insertEmbed(index,"image",imageData.url)
+            quill.setSelection(index+1);
+            toast.success("Image inserted!")
+         }
+         setIsImageModalOpen(false)
     }
   return (
     <div className='min-h-screen bg-slate-900 text-white'>

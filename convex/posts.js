@@ -1,6 +1,7 @@
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import {v} from 'convex/values'
+
 //Get user's draft (there should only be one)
 export const getUserDraft=query({
      handler:async(ctx)=>{
@@ -170,5 +171,69 @@ export const update=mutation({
        await ctx.db.patch(args.id,updateData)
        return args.id
    },
+
+})
+
+//get User Post 
+export const getUserPosts=query({
+   args:{
+      status:v.optional(v.union(v.literal("draft"),v.literal("published")))
+   },
+   handler:async (ctx , args) => {
+      const user=await ctx.runQuery(internal.users.getCurrentUser)
+
+      if(!user){
+         return []
+      }
+
+      let query=ctx.db
+          .query("posts")
+          .filter((q)=>q.eq(q.field("authorId"), user._id))
+      
+      //Filter by status if provided
+      if(args.status){
+         query=query.filter((q)=>q.eq(q.field("status"),args.status))
+      }
+
+     const posts=await query.order("desc").collect()
+
+     //Add username to each post
+     return posts.map((post)=>({
+       ...post,
+       username:user.username
+     }))
+   }
+})
+
+//Get a single post by ID
+export const getById =query({
+   args:{id:v.id("posts")},
+   handler:async (ctx , args) => {
+      await ctx.runQuery(internal.users.getCurrentUser)
+
+      return await ctx.db.get(args.id)
+   }
+})
+
+//Delete a existing post
+export const deletePost =mutation({
+   args:{id:v.id("posts")},
+   handler:async (ctx, args ) => {
+      const user =await ctx.runQuery(internal.users.getCurrentUser)
+
+      //get the post
+      const post =await ctx.db.get(args.id)
+      if(!post){
+         throw new Error("Post not found")
+      }
+
+      //check if user owns the post
+      if(post.authorId!==user._id){
+         throw new Error("Not authorized to delete this post")
+      }
+
+      await ctx.db.delete(args.id);
+      return {success: true}
+   }
 
 })

@@ -46,6 +46,7 @@ export const getCurrentUser=query({
         if(!identity){
             throw new Error("Not authenticated");
         }
+        // console.log(identity)
         const user=await ctx.db.query("users")
         .withIndex("by_token", (q) =>
         q.eq("tokenIdentifier", identity.tokenIdentifier),

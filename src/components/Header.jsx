@@ -12,14 +12,14 @@ import { Authenticated , Unauthenticated } from 'convex/react'
 import useStoreUser from '../../hooks/use-store-user'
 import { BarLoader} from "react-spinners"
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard } from 'lucide-react'
  const Header = () => {
   const {isLoading , isAuthenticated}=useStoreUser()
   const path=usePathname()
 
-  if(path.includes("/community/dashboard")) return null
+  //Hide header on public profile and post pages (but not on feed)
+  if(path!=="/community/" && path!=="/community/feed" && path.split("/community").length>=2) return null
   return (
     <header className='fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl px-4'>
         <div className='backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-2'>
@@ -58,9 +58,9 @@ import { LayoutDashboard } from 'lucide-react'
       <div className='flex items-center gap-2 sm:gap-3 flex-shrink-0'>
         <Authenticated>
            <Link href={"/community/dashboard"}>
-              <Button variant={"outline"} className={"hidden sm:flex cursor-pointer"} size={"sm"}>
+              <Button variant={"outline"} className={"sm:flex md:flex cursor-pointer"} size={"sm"}>
                  <LayoutDashboard className='h-4 w-4'/>
-                 <span className='hidden md:inline ml-2'>Dashboard</span>
+                 <span className='hidden md:inline ml-2  '>Dashboard</span>
               </Button>
            </Link>
            <UserButton />

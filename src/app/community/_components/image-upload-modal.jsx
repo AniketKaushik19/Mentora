@@ -218,6 +218,7 @@ export default function ImageUploadModal({
       );
 
       // Add a small delay to show loading state and allow ImageKit to process
+      toast.success("Wait for  2 second for configuration")
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       setTransformedImage(transformedUrl);
