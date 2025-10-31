@@ -8,11 +8,12 @@ import axios from "axios";
 import ReactMarkdown from 'react-markdown'
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
+import {  useRouter } from "next/navigation";
 function AiChat() {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messageList, setMessageList] = useState([]);
-
+const router=useRouter()
 const {chatid}=useParams();
 
 useEffect(()=>{
@@ -22,8 +23,7 @@ chatid && getMessageList()
 
 const getMessageList=async()=>{
 const result=await axios.get('/api/history?recordid=',chatid)
-setUserInput(result.data.content)
-}
+setUserInput(result?.data?.content?? "");}
 
   const onSend = async () => {
     setLoading(true);
@@ -35,7 +35,6 @@ setUserInput(result.data.content)
     const result = await axios.post("/api/ai-career-chat-agent", {
       userInput: userInput,
     });
-    console.log(result.data);
     setMessageList((prev) => [...prev, result.data]);
     setLoading(false);
   };
@@ -50,7 +49,6 @@ setUserInput(result.data.content)
    content:messageList,
    recordId:chatid
     })
-    console.log(result)
   }
 
 const onNewChat=async()=>{
@@ -60,7 +58,6 @@ const id=v4();
       recordId:id,
       content:[]
     })
-    console.log(result)
     router.replace('/ai-tools/ai-chat/'+id)
 }
   return (
@@ -76,10 +73,9 @@ const id=v4();
         </div>
         <Button onClick={onNewChat}> + New Chat</Button>
       </div>
-{console.log(messageList.length)}
       <div className="flex flex-col h-[60vh] md:h-[70vh] overflow-y-auto">
         {/* Empty State Options */}
-        {messageList.length-2 == 0 && 
+        {messageList.length <= 0 && 
           <div className="mt-5">
             <EmptyState setUserInput={setUserInput} />
           </div>

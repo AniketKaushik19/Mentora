@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import ResumeUploadDialog from "./ResumeUploadDialog";
-import RoadmapGeneratorDialog from "./RoadmapGEneratorDialog";
+import RoadmapGeneratorDialog from "./RoadmapGeneratorDialog";
 function AItoolsCard({tool}) {
 const id = uuidv4();
   const [openResumeDialog,setOpenResumeDialog]=useState(false)
@@ -45,7 +45,7 @@ try {
           {tool.button}
         </Button>
       <ResumeUploadDialog openResumeDialog={openResumeDialog} setOpenResumeDialog={setOpenResumeDialog}/>
-      <RoadmapGeneratorDialog openRoadmapDialog={openRoadmapDialog} setOpenRoadmapDialog={setOpenRoadmapDialog}/>
+      <RoadmapGeneratorDialog openRoadmapDialog={openRoadmapDialog} setOpenRoadmapDialog={setOpenRoadmapDialog}></RoadmapGeneratorDialog>
     </div>
   );
 }

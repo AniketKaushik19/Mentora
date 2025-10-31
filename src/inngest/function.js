@@ -53,35 +53,58 @@ export const AiResumeAgent = inngest.createFunction(
   { id: "AiResumeAgent" },
   { event: "AiResumeAgent" },
   async ({ event, step }) => {
-    const { recordId, base64ResumeFile, pdfText,aiAgentType ,userEmail} = await event.data;
-    //upload file to cloud
+    const { recordId, base64ResumeFile, pdfText, aiAgentType, userEmail } = event.data;
+    if (!pdfText || typeof pdfText !== "string" || pdfText.trim().length === 0) {
+      throw new Error("Missing or invalid PDF text.");
+    }
+
     const uploadFileUrl = await step.run("uploadImage", async () => {
       const imageKitFile = await imagekit.upload({
         file: base64ResumeFile,
-        // fileName: `${Date.Now()}.pdf`,
-        fileName: `sk.pdf`,
+        fileName: `${Date.now()}.pdf`,
         isPublished: true,
       });
       return imageKitFile.url;
     });
 
-const aiResumeReport=await AiResumeAnalyzerAgent.run(pdfText);
-const rawContent=aiResumeReport.output[0].content;
-const rawContentJson=rawContent.replace('```json','').replace('```','')
-const parseJson=JSON.parse(rawContentJson);
-//save to db
-const saveToDb=await step.run('SaveToDb',async()=>{
-const result=await db.insert(HistoryTable).values({
-  recordId:recordId,
-  content:parseJson,
-  aiAgentType:aiAgentType,
-  createdAt:new Date().toString(),
-  userEmail:userEmail,
-  metaData:uploadFileUrl
-})
-})
-return parseJson;
+    const aiResumeReport = await AiResumeAnalyzerAgent.run(pdfText);
 
+    if (
+      !aiResumeReport ||
+      !aiResumeReport.output ||
+      !Array.isArray(aiResumeReport.output) ||
+      aiResumeReport.output.length === 0 ||
+      !aiResumeReport.output[0].content
+    ) {
+      throw new Error("Invalid or empty response from AiResumeAnalyzerAgent.");
+    }
+
+    const rawContent = aiResumeReport.output[0].content;
+    const rawContentJson = rawContent.replace("```json", "").replace("```", "").trim();
+
+    let parseJson;
+    try {
+      parseJson = JSON.parse(rawContentJson);
+    } catch (err) {
+      console.error("JSON parsing error:", err.message);
+      throw new Error("Failed to parse AI response as JSON.");
+    }
+
+    await step.run("SaveToDb", async () => {
+      await db.insert(HistoryTable).values({
+        recordId,
+        content: parseJson,
+        aiAgentType,
+        createdAt: new Date().toString(),
+        userEmail,
+        metaData: uploadFileUrl,
+      });
+    });
+   return {
+  success: true,
+  recordId,
+  summary: parseJson.summary || null,
+};
   }
 );
 
@@ -95,6 +118,36 @@ export const AiRoadmapGeneratorAgent=createAgent({
   }),
 })
 
-export const AiRoadmapAgent=inngest.createFunction({
-  
-})
+export const AiRoadmapAgent=inngest.createFunction({id:"AiRoadMapAgent"},
+  {event:'AiRoadmapAgent'},
+  async({event,step})=>{
+    const {roadmapId,userInput,userEmail}=await event.data;
+    const roadmapResult=await AiRoadmapGeneratorAgent.run("userInput : "+ userInput)
+    console.log("roadmapResult : "+roadmapResult.toString())
+    const rawContent=roadmapResult.output[0].content;
+const rawContentJson=rawContent.replace('```json','').replace('```','')
+
+    let parseJson;
+    try {
+      parseJson = JSON.parse(rawContentJson);
+    } catch (err) {
+      console.error("JSON parsing error:", err.message);
+      throw new Error("Failed to parse AI response as JSON.");
+    }
+
+    await step.run("SaveToDb", async () => {
+    const result=  await db.insert(HistoryTable).values({
+        recordId:roadmapId,
+        content: parseJson,
+        aiAgentType:'/ai-tools/ai-roadmap-agent',
+        createdAt: new Date().toString(),
+        userEmail,
+        metaData: userInput,
+      });
+
+    });
+
+return parseJson;
+
+  }
+);

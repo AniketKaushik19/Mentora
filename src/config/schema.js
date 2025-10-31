@@ -10,7 +10,7 @@ export const HistoryTable=pgTable('historyTable',{
     id:integer().primaryKey().generatedAlwaysAsIdentity(),
     recordId:varchar().notNull(),
     content:json(),
-    userEmail:varchar('userEmail').references(()=> users.email),
+    userEmail:varchar(),
     createdAt:varchar(),
     aiAgentType:varchar(),
     metaData:varchar()

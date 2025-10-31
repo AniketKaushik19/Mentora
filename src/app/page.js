@@ -1,9 +1,4 @@
-"use client"
 
-import { Button } from "@/components/ui/button";
-import { features } from "@/lib/data";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import WelcomeBanner from "./dashboard/_components/WelcomeBanner";
 import AItools from "./dashboard/_components/AItools";
 import PrevHistory from "./dashboard/_components/PrevHistory";

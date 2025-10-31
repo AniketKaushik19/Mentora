@@ -44,14 +44,16 @@ const formData =new FormData();
  try {
    //send formdata to backend server
    const result=await axios.post('/api/ai-resume-agent',formData)
-   console.log(result.data)
-   setLoading(false)
-   
-   router.push('/ai-tool/ai-resume-analyzer')
+   console.log("result :"+result.data)
+   router.push('/ai-tools/ai-resume-analyzer')
    setOpenResumeDialog(false)
-  
- } catch (error) {
-  console.log("error  : "+error)
+   
+  } catch (error) {
+  console.log("error  : "+error.response.toString())
+   }
+   finally{
+   setLoading(false)
+
    }
 }
 

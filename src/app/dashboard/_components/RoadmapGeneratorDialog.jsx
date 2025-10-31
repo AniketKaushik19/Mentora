@@ -19,10 +19,24 @@ function RoadmapGeneratorDialog({openRoadmapDialog,setOpenRoadmapDialog} ) {
 
 const [loading,setLoading]=useState()
 const router=useRouter()
+const [userInput,setUserInput]=useState()
 
-
-const onGenerate=async()=>{
- 
+const GenerateRoadmap=async()=>{
+ const roadmapId=uuidv4()
+ setLoading(true);
+  try {
+  const result=await axios.post('/api/ai-roadmap-agent',{
+roadmapId:roadmapId,
+userInput:userInput
+  })
+  console.log("roadmap result "+result.data)
+  router.push('/ai-tools/ai-roadmap-agent/'+ roadmapId)
+} catch (error) {
+ console.log("err raodmap "+error)
+ }
+ finally{
+  setLoading(false)
+ }
 }
 
   return (
@@ -34,13 +48,13 @@ const onGenerate=async()=>{
       <DialogTitle>Enter Position / Skills to Generate Roadmap</DialogTitle>
       <DialogDescription>
        <div>
-       <Input placeholder='e.g Full Stack Developer'/>
+       <Input placeholder='e.g Full Stack Developer' onChange={(event)=>setUserInput(event?.target?.value)}/>
        </div>
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>
       <Button variant={'outline'}>Cancel</Button>
-      <Button disabled={loading} onClick={onGenerate}>
+      <Button disabled={loading || !userInput} onClick={GenerateRoadmap}>
         {loading?<Loader2Icon className='animate-spin'/>:<Sparkles/>
         }Generate</Button>
     </DialogFooter>

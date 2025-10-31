@@ -1,4 +1,4 @@
-import {  File, History, Layers, User } from "lucide-react"
+import {  BookHeart, File, Globe2, History, Layers, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -21,18 +21,28 @@ const items = [
   },
   {
     title: "AI Tools",
-    url: "/ai-tools/ai-chat",
+    url: "/ai-tools",
     icon: File,
   },
   {
     title: "History",
-    url: "/",
+    url: "/my-history",
     icon: History,
   },
   {
     title: "Profile",
     url: "/profile",
     icon: User,
+  },
+  {
+    title: "Community",
+    url: "/community",
+    icon: Globe2,
+  },
+  {
+    title: "Courses",
+    url: "/courses",
+    icon: BookHeart,
   },
 ]
 

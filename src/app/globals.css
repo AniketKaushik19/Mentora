@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Example for AppSidebar */
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  flex-shrink: 0;
+}
+main {
+  flex: 1;
+}
 
 @theme inline {
   --color-background: var(--background);
