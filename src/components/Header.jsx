@@ -18,17 +18,15 @@ import { LayoutDashboard } from 'lucide-react'
   const { isLoading, isAuthenticated } = useStoreUser();
   const path=usePathname()
   const router=useRouter()
-  //Hide header on public profile and post pages (but not on feed)
-  if(path!=="/" && path!=="/feed" && path.split("/").length>=2) return null
   
   //Redirect authenticated users from landing page to feed
   useEffect(()=>{
     if(!isLoading && isAuthenticated && path==="/"){
-      router.push("/feed")
+      router.push("/")
     }
   },[isLoading , isAuthenticated , path ])
   return (
-    <header className='fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl px-4'>
+    <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl px-4 ${(path==="/" || path==="/feed" || path==="/community")?"visible":"hidden"}`}>
         <div className='backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-2'>
         <Link href={isAuthenticated?"/":"/"} className='flex-shrink-0'>
           {/* <Image
