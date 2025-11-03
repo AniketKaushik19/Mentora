@@ -8,7 +8,7 @@ export default defineSchema({
         imageUrl:v.optional(v.string()),
         username:v.optional(v.string()),
         tokenIdentifier:v.string(),  //clerk user ID for auth
-
+        createdAt:v.optional(v.float64(Date.now())),
         //Activity timestamps
         lastActiveAt:v.optional(v.float64(Date.now())),
     })
@@ -48,7 +48,7 @@ export default defineSchema({
     .index("by_author_status",["authorId","status"])
     .searchIndex("search_content",{searchField:"title"}),
 
-    comment:defineTable({
+    comments:defineTable({
         postId:v.id("posts"),
         authorId:v.optional(v.id("users")),  //optional for annoymous comments
         authorName:v.string(),  //for Anonymous or display name

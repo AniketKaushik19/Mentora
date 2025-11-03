@@ -1,9 +1,10 @@
+"use client"
 import { useMutation, useQuery } from 'convex/react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-export const useConvexQuery = (query,...args) => {
-    const result=useQuery(query ,...args)
+export const useConvexQuery = (...args) => {
+    const result=useQuery( ...args)
     const [data,setData]=useState(undefined)
     const [isLoading ,setIsLoading]=useState(true)
     const [error ,setError]=useState(null)

@@ -31,6 +31,11 @@ const sidebarItems = [
     href: "/community/dashboard/followers",
     icon: Users,
   },
+  {
+    title: "Feed",
+    href: "/feed",
+    icon: Users,
+  },
 ];
 
 const DashboardLayout = ({children}) => {
@@ -93,7 +98,7 @@ const DashboardLayout = ({children}) => {
             </nav>
 
             <div className='absolute bottom-4 left-4 right-4'>
-                <Link href="dashboard/settings">
+                <Link href="/community/dashboard/settings">
                   <Button
                     variant="outline"
                     size="sm"
