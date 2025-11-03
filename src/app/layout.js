@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="white"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
@@ -37,16 +37,16 @@ export default function RootLayout({ children }) {
           }}>
 
               <ConvexClientProvider>
-                 <SidebarProvider>
-      <AppSidebar />
+                 {/* <SidebarProvider> */}
+                 {/* <AppSidebar /> */}
                {/* <Header/> */}
                {/* //header close  */}
-               <SidebarTrigger />
+               {/* <SidebarTrigger /> */}
                {/* <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">     */}
                <main className="min-h-screen  overflow-x-hidden">    
                {children}
                </main>
-</SidebarProvider>
+{/* </SidebarProvider> */}
               </ConvexClientProvider>
           </ClerkProvider>
           </ThemeProvider>

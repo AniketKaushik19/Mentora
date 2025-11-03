@@ -122,6 +122,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Text Gradient - Complex gradient used across the app */
 .gradient-text-primary {
   @apply bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent;
