@@ -5,7 +5,21 @@ import { v } from "convex/values";
 //Get dashboard analytics for the authenticated user
 export const getAnalytics=query({
     handler:async (ctx) => {
-        const user=await ctx.runQuery(internal.users.getCurrentUser)
+        const identity = await ctx.auth.getUserIdentity();
+         if (!identity) {
+           return null;
+         }
+     
+         // Get user from database
+        const user = await ctx.db
+           .query("users")
+           .filter((q) => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
+           .unique();
+     
+         if (!user) {
+           return null;
+        }
+
 
         //Get all user's posts
         const posts=await ctx.db
@@ -18,11 +32,12 @@ export const getAnalytics=query({
          .query("follows")
          .filter((q)=>q.eq(q.field("followingId"), user._id))
          .collect()
-
+        
         //Calculate analytics
         const totalViews=posts.reduce((sum,post)=>sum+post.viewCount,0)
         const totalLikes=posts.reduce((sum , post)=>sum+ post.likeCount , 0)
-
+        
+        
         //Get comment count for user's posts
         const postIds=posts.map((p)=>p._id)
 
@@ -46,16 +61,16 @@ export const getAnalytics=query({
         const recentPosts=posts.filter((p)=>p.createdAt>thirtyDaysAgo)
         const recentViews=recentPosts.reduce(
             (sum, post)=>sum + post.viewCount,0)
-        
-        const recentLikes=recentPosts.reduce(
-            (sum ,post)=>sum+post.likeCount ,0
-        )
-
-        //Simple growth calculation
-        const viewGrowth=totalViews > 0 ?(recentViews / totalViews)*100 : 0
-        const likeGrowth = totalLikes > 0 ? (recentLikes /totalLikes)*100 : 0
-        const commentsGrowth=totalComments > 0 ? 15 : 0 //Placeholder
-        const followersGrowth = followersCount.length > 0 ? 12 : 0 //placeholder
+            const recentLikes=recentPosts.reduce(
+                (sum ,post)=>sum+post.likeCount ,0
+            )
+            
+            //Simple growth calculation
+            const viewGrowth=totalViews > 0 ?(recentViews / totalViews)*100 : 0
+            const likeGrowth = totalLikes > 0 ? (recentLikes /totalLikes)*100 : 0
+            const commentsGrowth=totalComments > 0 ? 15 : 0 //Placeholder
+            const followersGrowth = followersCount.length > 0 ? 12 : 0 //placeholder
+            console.log(Math.round(viewGrowth*10)/10, likeGrowth , commentsGrowth , followersGrowth)
 
         return {
             totalViews ,

@@ -4,21 +4,36 @@ import {v} from 'convex/values'
 
 //Get user's draft (there should only be one)
 export const getUserDraft=query({
-     handler:async(ctx)=>{
-        const user=await ctx.runQuery(internal.users.getCurrentUser);
+handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
 
-        const draft=await ctx.db
-        .query("posts")
-        .filter(q=>q
-          .and(
-            q.eq(q.field("authorId"),user._id),
-            q.eq(q.field("authorId"),user._id)
-        ))
-        .unique();
+    // Get user from database
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
+      .unique();
 
-        return draft;
-     },
-})
+    if (!user) {
+      return null;
+    }
+
+    const draft = await ctx.db
+      .query("posts")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("authorId"), user._id),
+          q.eq(q.field("status"), "draft")
+        )
+      )
+      .unique();
+
+    return draft;
+  },
+});
+
 
 //Create a new post
 export const create=mutation({

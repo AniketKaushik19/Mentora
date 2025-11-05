@@ -25,7 +25,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { useConvexQuery } from "@/hooks/use-convex-query";
+import { api } from "../../../../convex/_generated/api";
+import { useConvexMutation } from "@/hooks/use-convex-query";
+import { useUser } from "@clerk/nextjs";
 const PostCard = ({
   post,
   showActions = false,
@@ -35,6 +38,7 @@ const PostCard = ({
   onDuplicate,
   className = "",
 }) => {
+  const {user:currentUser}=useUser()
   // Get status badge configuration
   const getStatusBadge = (post) => {
     if (post.status === "published") {
@@ -64,13 +68,37 @@ const PostCard = ({
       post.status === "published" &&
       (post.author?.username || post?.username)
     ) {
+
       return `/${post.author?.username || post?.username}/${post._id}`;
     }
     return null;
   };
-
+   const postId=post._id
   const statusBadge = getStatusBadge(post);
   const publicUrl = getPostUrl();
+  const {data:comments , isLoading:commentsLoading}=useConvexQuery(
+  api.comments.getPostComments,
+  {postId})
+  const toggleLike=useConvexMutation(api.likes.toggleLike)
+  
+    //Get like status for current user
+    const {data:hasLiked}=useConvexQuery(
+      api.likes.hasUserLiked,
+      currentUser?{postId}:"skip"
+    )
+    
+  const handleLikeToggle=async () => {
+     if(!currentUser){
+       toast.error("Please sign in to like posts")
+       return;
+     }
+
+     try {
+        await toggleLike.mutate({postId})
+     } catch (error) {
+        toast.error("Failed to update like")
+     }
+  }
 
   return (
     <Card
@@ -82,7 +110,7 @@ const PostCard = ({
           <Link
             href={publicUrl || "#"}
             className={!publicUrl ? "pointer-events-none" : ""}
-            target="_blank"
+            target="_self"
           >
             <div className="relative w-full h-48 rounded-lg overflow-hidden">
               <Image
@@ -126,7 +154,7 @@ const PostCard = ({
             {showActions && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="flex-shrink-0">
+                  <Button variant="ghost" size="icon" className="shrink-0">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -230,11 +258,24 @@ const PostCard = ({
                 {post.viewCount?.toLocaleString() || 0}
               </div>
               <div className="flex items-center gap-1">
-                <Heart className="h-4 w-4" />
-                {post.likeCount?.toLocaleString() || 0}
+                   <Button
+                        onClick={handleLikeToggle}
+                             variant={"ghost"}
+                             className={`flex items-center gap-2 ${
+                               hasLiked ?
+                                "text-red-400 hover:text-red-300":
+                                "text-slate-400 hover:text-white"
+                             }`}
+                             disabled={toggleLike.isLoading}
+                           >
+                             <Heart className={`h-5 w-5 ${hasLiked ? "fill-current" : ""}`}/>
+                             {post.likeCount.toLocaleString()}
+                           </Button>
               </div>
               <div className="flex items-center gap-1">
-                <MessageCircle className="h-4 w-4" />0
+                <MessageCircle className="h-4 w-4" />
+                {comments?.length||0}
+              
               </div>
             </div>
             <time>

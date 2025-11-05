@@ -15,6 +15,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 //fronted
 import Header from "@/components/Header";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
@@ -26,29 +27,31 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ClerkProvider
-            appearance={{
-              baseTheme: shadesOfPurple,
-            }}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
           >
-            <ConvexClientProvider>
-              <SidebarProvider>
-                <AppSidebar />
-                <Header />
-                {/* //header close  */}
-                <SidebarTrigger className="bg-slate-600"/>
-                <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">
-                  {/* <main className="min-h-screen  overflow-x-hidden">     */}
-                  {children}
-                </main>
-              </SidebarProvider>
-            </ConvexClientProvider>
+          <ClerkProvider 
+           publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          appearance={{
+             baseTheme:shadesOfPurple,
+          }}>
+
+              <ConvexClientProvider>
+                 {/* <SidebarProvider> */}
+                 {/* <AppSidebar /> */}
+                 <Header/>
+               {/* //header close  */}
+               {/* <SidebarTrigger /> */}
+               {/* <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">     */}
+               <main className="min-h-screen bg-slate-900 text-white  overflow-x-hidden">  
+                <Toaster richColors/>  
+               {children}
+               </main>
+{/* </SidebarProvider> */}
+              </ConvexClientProvider>
           </ClerkProvider>
         </ThemeProvider>
       </body>

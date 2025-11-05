@@ -67,8 +67,8 @@ export default function DashboardPage() {
     totalLikes: 0,
     totalComments: 0,
     totalFollowers: 0,
-    viewsGrowth: 0,
-    likesGrowth: 0,
+    viewGrowth: 0,
+    likeGrowth: 0,
     commentsGrowth: 0,
     followersGrowth: 0,
   };
@@ -107,9 +107,9 @@ export default function DashboardPage() {
             <div className="text-2xl font-bold text-white">
               {stats.totalViews.toLocaleString()}
             </div>
-            {stats.viewsGrowth > 0 && (
+            {stats.viewGrowth > 0 && (
               <div className="flex items-center text-xs text-green-400 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />+{stats.viewsGrowth}%
+                <TrendingUp className="h-3 w-3 mr-1" />+{stats.viewGrowth}%
                 from last month
               </div>
             )}
@@ -127,9 +127,9 @@ export default function DashboardPage() {
             <div className="text-2xl font-bold text-white">
               {stats.totalLikes.toLocaleString()}
             </div>
-            {stats.likesGrowth > 0 && (
+            {stats.likeGrowth > 0 && (
               <div className="flex items-center text-xs text-green-400 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />+{stats.likesGrowth}%
+                <TrendingUp className="h-3 w-3 mr-1" />+{stats.likeGrowth}%
                 from last month
               </div>
             )}
@@ -185,7 +185,7 @@ export default function DashboardPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-white">Recent Posts</CardTitle>
-                <Link href="/dashboard/posts">
+                <Link href="/community/dashboard/posts">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -204,7 +204,7 @@ export default function DashboardPage() {
               ) : !recentPosts || recentPosts.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-slate-400 mb-4">No posts yet</p>
-                  <Link href="/dashboard/create">
+                  <Link href="/community/dashboard/create">
                     <Button variant="outline" size="sm">
                       <PlusCircle className="h-4 w-4 mr-2" />
                       Create Your First Post
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                       className="flex items-center justify-between p-4 bg-slate-800/30 hover:bg-slate-700/30 cursor-pointer rounded-lg transition-colors"
                       onClick={() =>
                         window.open(
-                          `/dashboard/posts/edit/${post._id}`,
+                          `/community/dashboard/posts/edit/${post._id}`,
                           "_self"
                         )
                       }

@@ -10,7 +10,6 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import PostEditorContent from './PostEditorContent'
 import PostEditorSettings from './PostEditorSettings'
 import { toast } from 'sonner'
-import { id } from 'zod/v4/locales'
 import ImageUploadModal from './image-upload-modal'
 
 const postSchema=z.object({

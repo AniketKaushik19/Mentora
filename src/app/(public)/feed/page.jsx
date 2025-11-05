@@ -51,7 +51,7 @@ export default function FeedPage() {
       await toggleFollow.mutate({ followingId: userId });
       toast.success("Follow status updated");
     } catch (error) {
-      toast.error(error.message || "Failed to update follow status");
+      toast.error("You are trying to follow yourself!!");
     }
   };
 
@@ -107,7 +107,7 @@ export default function FeedPage() {
             {/* Create Post Prompt */}
             {currentUser && (
               <Link
-                href="/dashboard/create"
+                href="/community/dashboard/create"
                 className="flex items-center space-x-3 cursor-pointer"
               >
                 <div className="relative w-10 h-10">
@@ -120,7 +120,7 @@ export default function FeedPage() {
                       sizes="40px"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
+                    <div className="w-full h-full rounded-full bg-linear-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
                       {(currentUser.firstName || "U").charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -224,7 +224,7 @@ export default function FeedPage() {
                                     sizes="40px"
                                   />
                                 ) : (
-                                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
+                                  <div className="w-full h-full rounded-full bg-linear-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
                                     {user.name.charAt(0).toUpperCase()}
                                   </div>
                                 )}

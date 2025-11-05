@@ -123,7 +123,7 @@ const PostEditorHeader = ({
                     }}
                   >
                     <Calendar className='h-4 w-4 mr-2' />
-                    Schedule for later
+                    Schedule for later 
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

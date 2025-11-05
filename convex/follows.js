@@ -6,9 +6,9 @@ export const toggleFollow = mutation({
     args:{followingId:v.id("users")},
     handler:async (ctx , args) => {
         const follower=await ctx.runQuery(internal.users.getCurrentUser)
-
+        console.log(follower.id , args.id )
         if(follower._id=== args.followingId){
-            throw new Error("You cannot follow yourself")
+            return  new Error("You cannot follow yourself")
         }
 
         //Check if already following

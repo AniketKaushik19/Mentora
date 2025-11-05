@@ -300,7 +300,7 @@ const PostPage = ({params}) => {
                                       sizes='32px'
                                     />
                                   ):(
-                                    <div className='w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-sm font-bold'>{comment.author?.name?.charAt(0).toUpperCase()}</div>
+                                    <div className='w-full h-full rounded-full bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-sm font-bold'>{comment.author?.name?.charAt(0).toUpperCase()}</div>
                                   )}
                                 </div>
 
@@ -320,7 +320,7 @@ const PostPage = ({params}) => {
                                 </div>
                               </div>
                                {/* //Delete button  */}
-                               {console.log(currentConvexUser)}
+          
                                {currentConvexUser && 
                                  comment.author && 
                                  (currentConvexUser._id===comment.authorId || 

@@ -41,6 +41,7 @@ export default defineSchema({
         //Analystics
         viewCount:v.number(),
         likeCount:v.number(),
+        
     })
     .index("by_author" , ["authorId"])
     .index("by_status",["status"])
