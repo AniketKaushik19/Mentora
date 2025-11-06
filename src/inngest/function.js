@@ -1,8 +1,9 @@
 import { HistoryTable } from "@/config/schema";
-import { inngest } from "./client";
+// import { inngest } from "./client";
 import { createAgent, gemini } from "@inngest/agent-kit";
 import ImageKit from "imagekit";
 import { db } from "@/config/db";
+import { inngest } from ".";
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
   { event: "test/hello.world" },
