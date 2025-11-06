@@ -1,13 +1,15 @@
 "use client";
 
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import RoadmapCanvas from "../_components/RoadmapCanvas";
 import RoadmapGeneratorDialog from "@/app/dashboard/_components/RoadmapGeneratorDialog";
+import { MoveLeftIcon } from "lucide-react";
 
 function RoadmapGeneratorAgent() {
+  const router=useRouter()
   const [openRoadmapDialog, setOpenRoadmapDialog] = useState(false);
   const { roadmapid } = useParams();
   const [roadMapDetail, setRoadMapDetail] = useState();
@@ -26,7 +28,7 @@ function RoadmapGeneratorAgent() {
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-      <div className="border rounded-xl p-5">
+      <div className="border rounded-xl p-5 mx-2">
         <h2 className="font-bold text-2xl">
           {roadMapDetail?.content?.roadmapTitle}
         </h2>
@@ -42,6 +44,7 @@ function RoadmapGeneratorAgent() {
         >
           Create Another Roadmap +
         </Button>
+        <Button variant={"primary"} onClick={()=>router.push('/ai-tools')} className="m-10"><MoveLeftIcon/> Back</Button>
       </div>
       <div className="md:col-span-2 w-full h-[80vh]">
         <RoadmapCanvas
