@@ -1,15 +1,20 @@
+// src/app/api/inngest/route.ts  (for App Router)
+// or src/pages/api/inngest.ts (for Pages Router)
+import { serve } from "inngest/next";
+import { inngest } from "@/inngest";
+import {
+  AiCareerAgent,
+  // AiResumeAgent,
+  AiRoadmapAgent,
+  CoverLetterGeneratorFunction,
+} from "@/inngest/function";
 
-import {serve} from "inngest/next";
-import {inngest} from "@/inngest/client";
-import { AiCareerAgent, AiResumeAgent, AiRoadmapAgent, CoverLetterGeneratorFunction } from "@/inngest/function";
-
-// create an api that serves zero functions
-export const {GET, POST ,PUT} = serve({ client: inngest,
+export const { GET, POST, PUT } = serve({
+  client: inngest,
   functions: [
-   AiCareerAgent,
-  //  AiResumeAgent,
-   AiRoadmapAgent,
-   CoverLetterGeneratorFunction
-],
+    AiCareerAgent,
+    // AiResumeAgent,
+    AiRoadmapAgent,
+    CoverLetterGeneratorFunction,
+  ],
 });
-
