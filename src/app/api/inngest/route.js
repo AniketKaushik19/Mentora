@@ -7,7 +7,7 @@ import { AiCareerAgent, AiResumeAgent, AiRoadmapAgent, CoverLetterGeneratorFunct
 export const {GET, POST ,PUT} = serve({ client: inngest,
   functions: [
    AiCareerAgent,
-   AiResumeAgent,
+  //  AiResumeAgent,
    AiRoadmapAgent,
    CoverLetterGeneratorFunction
 ],
