@@ -1,4 +1,4 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest";
 import { currentUser } from "@clerk/nextjs/server";
 import axios from "axios";
 import { NextResponse } from "next/server";

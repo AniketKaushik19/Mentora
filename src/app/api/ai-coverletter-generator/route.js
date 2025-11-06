@@ -1,4 +1,4 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest";
 import axios from "axios";
 import { NextResponse } from "next/server";
 
