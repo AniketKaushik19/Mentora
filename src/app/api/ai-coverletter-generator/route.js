@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const { userInput } = await req.json();
   const resultIds = await inngest.send({
-      name: "CoverLetterGeneratorFunction",
+      name: "coverletter/generate",
       data: {
           userInput: userInput,
         },

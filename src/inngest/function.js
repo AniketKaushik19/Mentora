@@ -30,8 +30,8 @@ export const AiCareerChatAgent = createAgent({
 });
 
 export const AiCareerAgent = inngest.createFunction(
-  { id: "AiCareerAgent" },
-  { event: "AiCareerAgent" },
+  { id: "ai-career-agent" },
+  { event: "career/ask" },
   async ({ event, step }) => {
     const userInput = event?.data?.userInput;
     const result = await AiCareerChatAgent.run(userInput);
@@ -43,64 +43,79 @@ export const AiCareerAgent = inngest.createFunction(
 export const CoverLetterGeneratorAgent = createAgent({
   name: "CoverLetterGeneratorAgent",
   description: "An AI agent that generates professional cover letters.",
-  system: `
-You are a skilled AI Cover Letter Generator. Your role is to craft compelling, personalized, and well-structured cover letters for job applications. 
-Always maintain a professional and polished tone, highlighting the user's strengths, skills, and relevant experience. 
-Ensure the letter aligns with the job type and professional standards.
+    system: `
+You are an AI Cover Letter Generator trained to craft professional and polished cover letters as per Indian business communication standards.
 
-Follow these guidelines strictly:
-- Present the output as a formal, properly formatted cover letter with standard structure (Header, Greeting, Introduction, Body, Closing, Signature).
-- Do not include or mention any meta-text, commentary, or requests for additional information.
-- If the user provides unrelated content, gently redirect them to focus on cover letter generation.
-- Do not include or mention the following lines anywhere in the output:
-  "Okay, I can definitely help you craft a strong cover letter based on that information! Here's a first draft, incorporating the details you provided:"
-  or any request such as:
-  "Now, to make this even better, could you tell me a little more about the specific requirements mentioned in the job description?"
-  or similar clarifying prompts.
-Your only task is to generate the final, complete, professional cover letter using the details from user input.
+Your task is to generate **formal, concise, and respectful cover letters** tailored to the job title, company name, and user details provided.  
+Follow Indian professional norms — emphasizing clarity, tone, and etiquette expected in Indian corporate and technical job applications.
+
+Mention details as per the analysis such as If company name is google add google adress by your own .Don't leave anything like this [mention where you saw the advertisement if applicable]
+---
+
+### 🎯 OBJECTIVE
+Create a cover letter that:
+- Reflects professionalism and sincerity.
+- Highlights relevant skills, experience, and achievements.
+- Demonstrates alignment with the company’s goals and the job role.
+- Maintains a tone that is confident but humble.
+- Avoids unnecessary flattery or overused global phrases (e.g., “dream company”, “perfect fit”).
+- Is fully formatted and ready for submission — **no placeholders, no meta text**.
+
+---
+
+### 🧾 STRUCTURE (As per Indian Standard Business Format)
+
+
+1. **Recipient’s Information**
+   - Hiring Manager / HR Name (if provided)  
+   - Company Name  
+   - Company Address (optional)
+
+2. **Subject**
+   - Example: *Application for the Position of Software Developer*
+
+3. **Salutation**
+   - “Dear Sir/Madam,” or specific name if given.
+
+4. **Introduction Paragraph**
+   - Clearly mention the position being applied for and where it was seen (if applicable).  
+   - Introduce yourself in one to two lines with qualification or background.
+
+5. **Body Paragraph**
+   - Highlight relevant technical and interpersonal skills.  
+   - Mention internships, achievements, or academic projects relevant to the role.  
+   - Emphasize strengths such as problem-solving, teamwork, adaptability, and learning attitude.  
+   - Keep the tone positive, genuine, and confident.
+
+6. **Closing Paragraph**
+   - Express appreciation for consideration.  
+   - Mention availability for further discussion or interview.  
+   - Use a polite closing line like “I look forward to the opportunity to discuss my application.”
+
+7. **Sign-Off**
+   - “Yours sincerely,”  
+   - Full Name  
+   - Contact Details (Email / LinkedIn / GitHub / Portfolio if provided)
+
+---
+
+### 🧠 WRITING STYLE GUIDELINES
+- Use **Indian English** spelling conventions (e.g., “organise”, “behaviour”, “programme”).  
+- Maintain a **formal, courteous, and concise** tone.  
+- Keep it between **200–250 words** (1 page).  
+- Avoid personal pronouns like “I believe I’m perfect for this role” — instead, show suitability through examples.  
+- Never add meta-text (e.g., “Here’s your letter…” or “Please tell me more info”).  
+- Always output the **final, fully formatted cover letter only**.
 `,
-  examples: [
-    {
-      input: `
-userinput:
-Company Name: Priya Mehta Pvt Ltd
-Job Title: Software Developer
-Description: JavaScript, React, Node.js, problem-solving, teamwork
-`,
-      output: `
-Dear Hiring Manager,  
-[Company Name]  
-[Location]  
-
-Date:  
-
-Subject: Application for the Software Developer Position  
-
-I am writing to express my interest in the Software Developer position. With a strong foundation in JavaScript, React, and Node.js, along with hands-on experience gained through a six-month internship in web development, I am confident in my ability to contribute effectively to your team.  
-
-During my internship, I worked on building responsive and user-friendly web applications, gaining valuable insights into front-end and back-end integration. I also developed my own personal portfolio site and contributed to open-source projects, which strengthened my problem-solving and collaboration skills.  
-
-I am eager to bring my technical knowledge, enthusiasm for innovation, and commitment to continuous learning to your organization. I believe my adaptability and passion for development make me a strong fit for this role.  
-
-Thank you for considering my application. I look forward to the opportunity to discuss how my skills and experiences can align with your team’s goals.  
-
-Sincerely,  
-Priya Mehta  
-Email: [Your Email ID]  
-LinkedIn: [LinkedIn Profile] | GitHub: [GitHub ID] | Portfolio: [Portfolio Link]
-`,
-    },
-  ],
   model: gemini({
     model: "gemini-2.0-flash",
     apiKey: process.env.GEMINI_API_KEY,
   }),
 });
 
-
 export const CoverLetterGeneratorFunction = inngest.createFunction(
-  { id: "CoverLetterGeneratorFunction" },
-  { event: "CoverLetterGeneratorFunction" },
+  { id: "cover-letter-generator" },
+  { event: "coverletter/generate" },
   async ({ event, step }) => {
     const userInput = event?.data?.userInput;
     const result = await CoverLetterGeneratorAgent.run(userInput);
@@ -188,8 +203,8 @@ export const AiRoadmapGeneratorAgent=createAgent({
   }),
 })
 
-export const AiRoadmapAgent=inngest.createFunction({id:"AiRoadMapAgent"},
-  {event:'AiRoadmapAgent'},
+export const AiRoadmapAgent=inngest.createFunction({id:"roadmap-generator-function"},
+  {event:'roadmap/generate'},
   async({event,step})=>{
     const {roadmapId,userInput,userEmail}=await event.data;
     const roadmapResult=await AiRoadmapGeneratorAgent.run("userInput : "+ userInput)

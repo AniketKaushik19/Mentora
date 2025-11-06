@@ -6,14 +6,8 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const user=await currentUser()
   const { roadmapId, userInput } = await req.json();
-  console.log(
-    "going to send:"+
-          "userInput:"+ userInput+
-          "roadmapId:"+roadmapId+
-      ",userEmail:"+user?.primaryEmailAddress?.emailAddress
-        )
   const resultIds = await inngest.send({
-      name: "AiRoadmapAgent",
+      name: "roadmap/generate",
       data: {
         userInput: userInput,
         roadmapId:roadmapId,
