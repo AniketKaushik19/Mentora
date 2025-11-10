@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoaderCircleIcon, Send } from "lucide-react";
+import { LoaderCircleIcon, MoveLeftIcon, Send } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import EmptyState from "../_components/EmptyState";
 import axios from "axios";
@@ -65,6 +65,7 @@ await axios.post('/api/history',{
 }
   return (
     <div className="px-5 md:px-24 lg:px-36 xl:px-48 py-10">
+      <Button variant={"primary"} onClick={()=>router.push('/')} className="mb-10"><MoveLeftIcon/> Back</Button>
       <div className="flex flex-col md:flex-row items-center justify-between gap-2 md:gap-10 md:my-5">
         <div>
           <h2 className="font-bold text-xl">AI Career Q/A Chat</h2>

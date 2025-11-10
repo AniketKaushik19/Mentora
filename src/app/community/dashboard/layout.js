@@ -36,6 +36,11 @@ const sidebarItems = [
     href: "/feed",
     icon: Rss,
   },
+  {
+    title: "AI Career",
+    href: "/",
+    icon: ToolCase,
+  },
 ];
 
 const DashboardLayout = ({children}) => {

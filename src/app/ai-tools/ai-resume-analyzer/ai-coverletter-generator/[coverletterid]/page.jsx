@@ -9,8 +9,7 @@ import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
-import remarkGfm from "remark-gfm";
-import { MoveLeftIcon } from "lucide-react";
+
 function CoverLetterPage() {
   const router = useRouter();
   const { coverletterid } = useParams();
@@ -47,9 +46,7 @@ function CoverLetterPage() {
         userInput,
       });
       const content = response?.data?.content;
-      setCoverLetter(
-        typeof content === "string" ? content : "No content received."
-      );
+      setCoverLetter(typeof content === "string" ? content : "No content received.");
     } catch (error) {
       console.error("Error generating cover letter:", error);
       setCoverLetter("Something went wrong. Please try again.");
@@ -68,12 +65,11 @@ function CoverLetterPage() {
   };
 
   return (
-    <div className="px-5 md:px-24 lg:px-36 xl:px-48 py-10 space-y-6">
-        <Button variant={"primary"} onClick={()=>router.push('/ai-tools')}><MoveLeftIcon/> Back</Button>
+    <div className="px-10 md:px-24 lg:px-36 xl:px-48 py-10 space-y-6">
       <div className="flex items-center justify-between gap-10">
         <div>
           <h2 className="font-bold text-xl">AI Cover Letter Generator</h2>
-          <p className="text-sm text-gray-500 text-justify">
+          <p className="text-sm text-gray-500">
             Craft personalized, professional cover letters in seconds. Just tell
             us about the job and your experience — we’ll handle the rest.
           </p>
@@ -118,19 +114,14 @@ function CoverLetterPage() {
         </Button>
       </div>
 
-      {typeof coverLetter === "string" && coverLetter.trim() !== "" && (
-        <div className="mt-8 p-2 md:p-6 bg-gray-100 dark:bg-gray-800 rounded-md shadow overflow-x-auto">
-          <h3 className="font-semibold text-lg mb-4">Your Cover Letter</h3>
-          <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap wrap-break-word">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {coverLetter
-                ?.replace(/\\n/g, "\n")
-                ?.replace(/\*\*(.*?)\*\*/g, "**$1**")
-                ?.trim()}
-            </ReactMarkdown>
-          </div>
-        </div>
-      )}
+     {typeof coverLetter === "string" && coverLetter.trim() !== "" && (
+  <div className="mt-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-md shadow">
+    <h3 className="font-semibold text-lg mb-4">Your Cover Letter</h3>
+    <ReactMarkdown >
+      {coverLetter.replace(/\\n/g, '\n').replace(/\n/g, '\n\n')}
+    </ReactMarkdown>
+  </div>
+)}
     </div>
   );
 }

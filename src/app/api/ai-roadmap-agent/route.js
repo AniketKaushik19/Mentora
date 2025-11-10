@@ -1,4 +1,4 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest";
 import { currentUser } from "@clerk/nextjs/server";
 import axios from "axios";
 import { NextResponse } from "next/server";
@@ -6,14 +6,8 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const user=await currentUser()
   const { roadmapId, userInput } = await req.json();
-  console.log(
-    "going to send:"+
-          "userInput:"+ userInput+
-          "roadmapId:"+roadmapId+
-      ",userEmail:"+user?.primaryEmailAddress?.emailAddress
-        )
   const resultIds = await inngest.send({
-      name: "AiRoadmapAgent",
+      name: "roadmap/generate",
       data: {
         userInput: userInput,
         roadmapId:roadmapId,
@@ -36,17 +30,20 @@ console.log(JSON.stringify(runStatus.data?.[0], null, 2));
 
 export async function getRuns(runId) {
   try {
-    const result = await axios.get(
-      process.env.INNGEST_SERVER_HOST + "/v1/events/" + runId + "/runs",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
-        },
-      }
-    );
+    // Use local dev URL only if running locally
+    const baseUrl =
+      process.env.INNGEST_SERVER_HOST ||
+      "https://api.inngest.com"; // Cloud endpoint fallback
+
+    const result = await axios.get(`${baseUrl}/v1/events/${runId}/runs`, {
+      headers: {
+        Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
+      },
+    });
+
     return result.data;
   } catch (error) {
-    console.error("Error fetching run status:", error);
+    console.error("Error fetching run status:", error.response?.data || error);
     return null;
   }
 }

@@ -1,11 +1,11 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest";
 import axios from "axios";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { userInput } = await req.json();
   const resultIds = await inngest.send({
-    name: "AiCareerAgent",
+    name: "career/ask",
     data: {
       userInput: userInput,
     },
@@ -20,19 +20,24 @@ export async function POST(req) {
   return NextResponse.json(runStatus.data?.[0].output?.output[0]);
 }
 
+
 export async function getRuns(runId) {
   try {
-    const result = await axios.get(
-      process.env.INNGEST_SERVER_HOST + "/v1/events/" + runId + "/runs",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
-        },
-      }
-    );
+    // Use local dev URL only if running locally
+    const baseUrl =
+      process.env.INNGEST_SERVER_HOST ||
+      "https://api.inngest.com"; // Cloud endpoint fallback
+
+    const result = await axios.get(`${baseUrl}/v1/events/${runId}/runs`, {
+      headers: {
+        Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
+      },
+    });
+
     return result.data;
   } catch (error) {
-    console.error("Error fetching run status:", error);
+    console.error("Error fetching run status:", error.response?.data || error);
     return null;
   }
 }
+
