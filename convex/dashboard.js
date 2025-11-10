@@ -70,7 +70,6 @@ export const getAnalytics=query({
             const likeGrowth = totalLikes > 0 ? (recentLikes /totalLikes)*100 : 0
             const commentsGrowth=totalComments > 0 ? 15 : 0 //Placeholder
             const followersGrowth = followersCount.length > 0 ? 12 : 0 //placeholder
-            console.log(Math.round(viewGrowth*10)/10, likeGrowth , commentsGrowth , followersGrowth)
 
         return {
             totalViews ,

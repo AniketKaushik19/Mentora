@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import { LayoutDashboard,PenTool,FileText,Users, X, Settings, Menu } from 'lucide-react';
+import { LayoutDashboard,PenTool,FileText,Users, X, Settings, Menu, Rss } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import Link from 'next/link';
@@ -27,14 +27,14 @@ const sidebarItems = [
     icon: FileText,
   },
   {
-    title: "Followers",
+    title: "Followings",
     href: "/community/dashboard/followers",
     icon: Users,
   },
   {
     title: "Feed",
     href: "/feed",
-    icon: Users,
+    icon: Rss,
   },
 ];
 
@@ -47,7 +47,7 @@ const DashboardLayout = ({children}) => {
         {/* //mobile sidebar */}
         <aside className={cn("fixed top-0 left-0 h-full w-64 bg-slate-800/50 backdrop-blur-sm border-r border-slate-700 z-50 transition-transform duration-300 lg:translate-x-0",isSidebarOpen?"translate-x-0":"-translate-x-full")}>
             <div className='flex items-center justify-between p-5 border-b border-slate-700'>
-                <Link href={"/community"} className='flex-shrink-0'>
+                <Link href={"/community"} className='shrink-0'>
                   {/* <Image 
                      className='h-8 sm:h-10 md:h-11 w-auto object-contain'
                      src={"/logo.png"}
@@ -55,7 +55,7 @@ const DashboardLayout = ({children}) => {
                      width={96}
                      height={32}
                   /> */}
-                  <span className='bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl h-8 sm:h-10 md:h-11 w-auto object-contain '>Mentora</span>
+                  <span className='bg-linear-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl h-8 sm:h-10 md:h-11 w-auto object-contain '>Mentora</span>
                 </Link>
                 <Button
                     variant="ghost"
@@ -78,7 +78,7 @@ const DashboardLayout = ({children}) => {
                           onClick={()=>setIsSidebarOpen(false)}
                         >
                             <div className={cn(
-                                "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group" , isActive?"bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-500 text-white":"text-slate-300 hover:text-white hover:bg-slate-700/50")}>
+                                "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group hover:my-4" , isActive?"bg-linear-to-r from-purple-600/20 to-blue-600/20 border-purple-500 text-white":"text-slate-300 hover:text-white hover:bg-slate-700/50")}>
                                <item.icon 
                                   className={cn('h-5 w-5 transition-colors', isActive? "text-purple-400":"text-slate-400 group-hover:text-white")}
                                /> 

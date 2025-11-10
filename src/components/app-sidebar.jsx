@@ -55,7 +55,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>
             <Link href={"/"}>
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text my-10">
+              <h2 className="text-4xl font-bold bg-linear-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text my-10">
                 Mentora
               </h2>
             </Link>

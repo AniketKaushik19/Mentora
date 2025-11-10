@@ -128,11 +128,11 @@ html {
 
 /* Text Gradient - Complex gradient used across the app */
 .gradient-text-primary {
-  @apply bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent;
+  @apply bg-linear-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent;
 }
 
 .gradient-text-accent {
-  @apply bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent;
+  @apply bg-linear-to-r from-white to-gray-300 bg-clip-text text-transparent;
 }
 
 /* Glass Card Effect - Complex background/border combination used frequently */

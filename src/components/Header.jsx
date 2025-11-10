@@ -33,7 +33,7 @@ import { LayoutDashboard } from 'lucide-react'
   return (
     <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl px-4 ${(path==="/" || path==="/feed" || path==="/community")?"visible":"hidden"}`}>
         <div className='backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-2'>
-        <Link href={isAuthenticated?"/":"/"} className='flex-shrink-0'>
+        <Link href={isAuthenticated?"/":"/"} className='shrink-0'>
           {/* <Image
             src="/logo.png"
             alt="create.logo"
@@ -41,7 +41,7 @@ import { LayoutDashboard } from 'lucide-react'
             height={32}
             className='h-8 sm:h-10 w-auto object-contain'
           /> */}
-           <span className='bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl '>Mentora</span>
+           <span className='bg-linear-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl '>Mentora</span>
         </Link>
 
         {path==="/" && (
@@ -65,7 +65,7 @@ import { LayoutDashboard } from 'lucide-react'
           </div>
         )}
 
-      <div className='flex items-center gap-2 sm:gap-3 flex-shrink-0'>
+      <div className='flex items-center gap-2 sm:gap-3 shrink-0'>
         <Authenticated>
            <Link href={"/community/dashboard"}>
               <Button variant={"outline"} className={"sm:flex md:flex cursor-pointer"} size={"sm"}>

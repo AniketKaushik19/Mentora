@@ -41,7 +41,6 @@ export const isFollowing = query({
     args:{followingId:v.optional(v.id("users"))},
     handler:async (ctx, args) => {
         const follower=await ctx.runQuery(internal.users.getCurrentUser)
-
         const follow=await ctx.db
          .query("follows")
          .filter((q)=>
@@ -66,3 +65,24 @@ export const getFollowerCount =query({
         return follows.length
     }
 })
+
+//follower information
+export const getFollowingUsers = query({
+  args: {
+    followerId: v.id("users"),   
+  },
+  handler: async (ctx, args) => {
+    const followDocs = await ctx.db
+      .query("follows")
+      .filter((q) => q.eq(q.field("followerId"), args.followerId))
+      .collect();
+
+    const followingIds = followDocs.map((doc) => doc.followingId);
+
+    const users = await Promise.all(
+      followingIds.map((id) => ctx.db.get(id))
+    );
+
+    return users.filter(Boolean); // remove nulls if any user was deleted
+  },
+});
