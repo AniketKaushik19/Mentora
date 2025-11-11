@@ -38,7 +38,7 @@ const sidebarItems = [
   },
   {
     title: "AI Career",
-    href: "/",
+    href: "/#",
     icon: ToolCase,
   },
 ];
