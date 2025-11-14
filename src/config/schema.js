@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, varchar,json, json } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, varchar, json } from "drizzle-orm/pg-core";
 
 
 export const HistoryTable=pgTable('historyTable',{
