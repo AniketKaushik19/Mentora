@@ -44,14 +44,9 @@ import { LayoutDashboard } from 'lucide-react'
            <span className='bg-linear-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl '>Mentora</span>
         </Link>
 
-        {path==="/" && (
+        {(path==="/" || path==='/community') && (
           <div className='hidden lg:flex space-x-6 flex-1 justify-center'>
-            <Link href="#features"
-                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
-            >
-               Features
-            </Link>
-            <Link href="/community"
+         <Link href="/community"
                   className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
             >
                Community
@@ -61,12 +56,11 @@ import { LayoutDashboard } from 'lucide-react'
             >
                Courses
             </Link>
-            {/* <Link 
-               href="testimonials"
-               className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
+            <Link href="/ai-tools"
+                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
             >
-             Testimonials
-            </Link> */}
+               AI Tools
+            </Link>
           </div>
         )}
 
@@ -75,7 +69,7 @@ import { LayoutDashboard } from 'lucide-react'
            <Link href={"/community/dashboard"}>
               <Button variant={"outline"} className={"sm:flex md:flex cursor-pointer"} size={"sm"}>
                  <LayoutDashboard className='h-4 w-4'/>
-                 <span className='hidden md:inline ml-2  '>Dashboard</span>
+                 <span className='hidden md:inline ml-2 '>Dashboard</span>
               </Button>
            </Link>
            <UserButton />

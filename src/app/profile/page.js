@@ -5,8 +5,7 @@ import useStoreUser from '../../../hooks/use-store-user'
 import { Button } from '@/components/ui/button'
 
 function page() {
-  const {isAuthenticated}=useStoreUser
-  ()
+  const {isAuthenticated}=useStoreUser()
   return (
     <div className='min-h-screen  my-2 flex justify-center items-center flex-col '>
       {isAuthenticated ?<UserProfile/> :<> <h2 className='px-5  text-gray-500'>Please sign in to view your profile</h2> 

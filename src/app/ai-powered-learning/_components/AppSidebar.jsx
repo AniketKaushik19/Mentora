@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Book, Compass, LayoutDashboard, PencilRulerIcon, UserCircle2Icon, WalletCards } from "lucide-react";
+import { Book, Compass, Globe, LayoutDashboard, PencilRulerIcon, ToolCase, UserCircle2Icon, WalletCards } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AddNewCourseDialog from "./AddNewCourseDialog";
@@ -37,19 +37,30 @@ const SideBarOptions=[
   {
     title:'Profile',
     icon:UserCircle2Icon,
-    path:'/ai-powered-learning/profile'
+    path:'/profile'
+  },
+  {
+    title:'Community',
+    icon:Globe,
+    path:'/community'
+  },
+  {
+    title:'AI Tools',
+    icon:ToolCase,
+    path:'/ai-tools'
   },
 ]
 function AppSidebar() {
   const path =usePathname();
   return (
     <Sidebar className="w-64 bg-gray-900 text-white flex flex-col">
-      <SidebarHeader className="text-4xl m-5 font-bold bg-gradient-to-r from-purple-800  to-blue-700 bg-clip-text text-transparent">
-        Mentora
+     
+    <SidebarHeader className="text-4xl m-5 font-bold bg-gradient-to-r from-purple-800  to-blue-700 bg-clip-text text-transparent">
+      <Link to={'/'}>  Mentora </Link> 
       </SidebarHeader>
 
       <SidebarContent className="flex-1 px-4 ">
-        <SidebarGroup>git
+        <SidebarGroup>
           <AddNewCourseDialog>
           <Button className="w-full cursor-pointer text-white bg-gradient-to-r from-purple-800  to-blue-700 hover:bg-purple-700">
             Create New Course
