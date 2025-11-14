@@ -13,12 +13,12 @@ export const aiToolsList = [
   button: "Start",
   icon: "/resume.png" // Represents documents or resumes
 },
-// {path:"/ai-tools/ai-roadmap-agent",
-//  name: "Learning Roadmap",
-//   desc: "Chat with AI Agent",
-//   button: "Get Started",
-//   icon: "/roadmap.png" // Represents roadmap or planning
-// },
+{path:"/ai-tools/ai-roadmap-agent",
+ name: "Learning Roadmap",
+  desc: "Chat with AI Agent",
+  button: "Get Started",
+  icon: "/roadmap.png" // Represents roadmap or planning
+},
 {path:"/ai-tools/ai-coverletter-generator",
  name: "Cover Letter Generator",
   desc: "Chat with AI Agent",

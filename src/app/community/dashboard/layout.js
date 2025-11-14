@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import { LayoutDashboard,PenTool,FileText,Users, X, Settings, Menu, Rss , ToolCase } from 'lucide-react';
+import { LayoutDashboard,PenTool,FileText,Users, X, Settings, Menu, Rss , ToolCase, BookAIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import Link from 'next/link';
@@ -40,6 +40,11 @@ const sidebarItems = [
     title: "AI Career",
     href: "/#",
     icon: ToolCase,
+  },
+  {
+    title: "Courses",
+    href: "/",
+    icon: BookAIcon,
   },
 ];
 

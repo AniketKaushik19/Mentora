@@ -24,6 +24,7 @@ function PrevHistory() {
     setLoading(true);
     const result = await axios.get("/api/history");
     setUserHistory(result.data);
+    console.log(result.data)
     setLoading(false);
   };
 
@@ -77,8 +78,11 @@ function PrevHistory() {
                     height={10}
                   />
                   <h2>
-                    {history?.content?.roadmapTitle ||
-                      history?.content[0]?.content}
+                    {
+                    history?.content?.roadmapTitle ||
+                      history?.content[0]?.content ||
+                      'Score: '+ history?.content?.overall_score
+                      } 
                   </h2>
                 </div>
                 <h2>{GetAgentName(history.aiAgentType)?.name}</h2>

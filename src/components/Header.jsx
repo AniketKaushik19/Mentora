@@ -56,6 +56,11 @@ import { LayoutDashboard } from 'lucide-react'
             >
                Community
             </Link>
+            <Link href="/ai-powered-learning"
+                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
+            >
+               Courses
+            </Link>
             {/* <Link 
                href="testimonials"
                className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
