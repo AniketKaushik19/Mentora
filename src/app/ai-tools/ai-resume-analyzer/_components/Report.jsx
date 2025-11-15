@@ -32,7 +32,7 @@ function Report({ aiReport }) {
         <Button
           type="button"
           onClick={() => setOpenResumeDialog(true)}
-          className="text-white hover:text-gray-600 hover:bg-gray-300"
+          className=" hover:text-gray-600 hover:bg-gray-300"
         >
           Re-analyze <Sparkle />
         </Button>
@@ -58,7 +58,7 @@ function Report({ aiReport }) {
 
         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
           <div
-            className="bg-white h-2.5 rounded-full"
+            className="bg-pink-400 h-2.5 rounded-full"
             style={{ width: `${aiReport?.overall_score}%` }}
           ></div>
         </div>

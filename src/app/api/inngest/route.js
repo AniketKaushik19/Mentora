@@ -3,7 +3,7 @@
 import { serve } from "inngest/next";
 import {
   AiCareerAgent,
-  // AiResumeAgent,
+  AiResumeAgent,
   AiRoadmapAgent,
   CoverLetterGeneratorFunction,
 } from "@/inngest/function";
@@ -13,7 +13,7 @@ export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
     AiCareerAgent,
-    // AiResumeAgent,
+    AiResumeAgent,
     AiRoadmapAgent,
     CoverLetterGeneratorFunction,
   ],

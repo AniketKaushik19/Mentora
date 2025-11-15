@@ -1,81 +1,79 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
+import { NextResponse } from "next/server";
+import { extractTextFromPDF } from "@/lib/pdfParser";
+import { currentUser } from "@clerk/nextjs/server";
+import { inngest } from "@/inngest";
+import axios from "axios";
 
-// import { inngest } from "@/inngest/client";
-// import axios from "axios";
-// import { currentUser } from "@clerk/nextjs/server";
+export async function POST(req) {
+  try {
+    const user = await currentUser();
+    const formData = await req.formData();
+    const resumeFile = formData.get("resumeFile");
+    const recordId = formData.get("recordId");
 
-// export async function POST(req) {
+    if (!resumeFile) {
+      throw new Error("Missing resume file");
+    }
 
-//    const user = await currentUser();
-//   const formData = await req.formData();
-//   const resumeFile = formData.get("resumeFile");
-//   const recordId = formData.get("recordId");
-//   const loader = new WebPDFLoader(resumeFile);
-//   const docs = await loader.load();
+    const arrayBuffer = await resumeFile.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-//   // console.log(docs[0]); //Raw pdf text
-//   const arrayBuffer = await resumeFile.arrayBuffer();
-//   const base64 = Buffer.from(arrayBuffer).toString("base64");
-// // console.log("Sending to Inngest:", {
-// //   recordId,
-// //   base64ResumeFile: base64,
-// //   pdfText: docs?.[0]?.pageContent?.trim(),
-// //   aiAgentType: "/ai-tool/ai-resume-analyzer",
-// //   userEmail: user?.primaryEmailAddress?.emailAddress || null,
-// // });
+    // 🧠 Extract text using pdfreader
+    const pdfText = await extractTextFromPDF(buffer);
+    const base64 = buffer.toString("base64");
 
-//   const resultIds = await inngest.send({
-//     name: "AiResumeAgent",
-//     data: {
-//       recordId: recordId,
-//       base64ResumeFile: base64,
-//       pdfText: docs?.[0]?.pageContent?.trim() || "",
-//       aiAgentType:'/ai-tools/ai-resume-analyzer',
-//       userEmail:user?.primaryEmailAddress?.emailAddress
-//     },
-//   });
-//   const runId = resultIds?.ids[0];
-//   // console.log("runId"  + runId )
-//   let runStatus;
-//   while (true) {
-//     runStatus = await getRuns(runId);
-//     if (runStatus?.data[0]?.status === "Completed") break;
-//     if (runStatus?.data[0]?.status === "Cancelled") break;
-//     try {
-//       await new Promise((resolve) => setTimeout(resolve, 500));
-      
-//     } catch (error) {
-//       console.log("MY ERR: "+error)
-//     }
-//   }
-// if (
-//   Array.isArray(runStatus?.data) &&
-//   runStatus.data.length > 0 &&
-//   runStatus.data[0]?.output?.output &&
-//   Array.isArray(runStatus.data[0].output.output) &&
-//   runStatus.data[0].output.output.length > 0
-// ) {
-//   return NextResponse.json(runStatus.data[0].output.output[0] || runStatus.data[0].output );
-// } else {
-//   return NextResponse.json({ error: "Missing or invalid output data from runStatus." }, { status: 500 });
-// }
+    const resultIds = await inngest.send({
+      name: "AiResumeAgent",
+      data: {
+        recordId,
+        base64ResumeFile: base64,
+        pdfText: pdfText || "",
+        aiAgentType: "/ai-tools/ai-resume-analyzer",
+        userEmail: user?.primaryEmailAddress?.emailAddress || null,
+      },
+    });
 
-// }
+    const runId = resultIds?.ids?.[0];
+    let runStatus;
 
-// export async function getRuns(runId) {
-//   try {
-//     const result = await axios.get(
-//       process.env.INNGEST_SERVER_HOST + "/v1/events/" + runId + "/runs",
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
-//         },
-//       }
-//     );
-//     return result.data;
-//   } catch (error) {
-//     console.error("Error fetching run status:", error);
-//     return null;
-//   }
-// }
+    while (true) {
+      runStatus = await getRuns(runId);
+      const status = runStatus?.data?.[0]?.status;
+      if (status === "Completed" || status === "Cancelled") break;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
+    const output =
+      runStatus?.data?.[0]?.output?.output?.[0] ||
+      runStatus?.data?.[0]?.output;
+
+    if (!output) {
+      return NextResponse.json(
+        { error: "Missing or invalid output data from Inngest" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(output);
+  } catch (error) {
+    console.error("❌ Error processing resume:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+async function getRuns(runId) {
+  try {
+    const result = await axios.get(
+      `${process.env.INNGEST_SERVER_HOST}/v1/events/${runId}/runs`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
+        },
+      }
+    );
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching run status:", error);
+    return null;
+  }
+}

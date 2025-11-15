@@ -139,20 +139,33 @@ export const AiResumeAgent = inngest.createFunction(
   { id: "AiResumeAgent" },
   { event: "AiResumeAgent" },
   async ({ event, step }) => {
-    const { recordId, base64ResumeFile, pdfText, aiAgentType, userEmail } = event.data;
+    const { recordId, base64ResumeFile, pdfText, aiAgentType, userEmail } = event.data || {};
+
+    // ✅ Step 1: Input validation
+    if (!recordId || !userEmail) {
+      throw new Error("Missing required fields: recordId or userEmail.");
+    }
+
     if (!pdfText || typeof pdfText !== "string" || pdfText.trim().length === 0) {
       throw new Error("Missing or invalid PDF text.");
     }
 
+    // ✅ Step 2: Upload PDF to ImageKit
     const uploadFileUrl = await step.run("uploadImage", async () => {
-      const imageKitFile = await imagekit.upload({
-        file: base64ResumeFile,
-        fileName: `${Date.now()}.pdf`,
-        isPublished: true,
-      });
-      return imageKitFile.url;
+      try {
+        const imageKitFile = await imagekit.upload({
+          file: base64ResumeFile,
+          fileName: `${Date.now()}.pdf`,
+          isPublished: true,
+        });
+        return imageKitFile.url;
+      } catch (err) {
+        console.error("ImageKit upload failed:", err.message);
+        throw new Error("Resume upload failed.");
+      }
     });
 
+    // ✅ Step 3: Run the AI analyzer
     const aiResumeReport = await AiResumeAnalyzerAgent.run(pdfText);
 
     if (
@@ -165,32 +178,43 @@ export const AiResumeAgent = inngest.createFunction(
       throw new Error("Invalid or empty response from AiResumeAnalyzerAgent.");
     }
 
-    const rawContent = aiResumeReport.output[0].content;
-    const rawContentJson = rawContent.replace("```json", "").replace("```", "").trim();
+    // ✅ Step 4: Clean and parse AI JSON output
+    let rawContent = aiResumeReport.output[0].content.trim();
 
-    let parseJson;
+    rawContent = rawContent
+      .replace(/^```json/i, "")
+      .replace(/^```/, "")
+      .replace(/```$/, "")
+      .trim();
+
+    let parsedJson;
     try {
-      parseJson = JSON.parse(rawContentJson);
+      parsedJson = JSON.parse(rawContent);
     } catch (err) {
+      console.error("AI output (raw):", rawContent);
       console.error("JSON parsing error:", err.message);
-      throw new Error("Failed to parse AI response as JSON.");
+      throw new Error("Failed to parse AI response as valid JSON.");
     }
 
+    // ✅ Step 5: Save to database
     await step.run("SaveToDb", async () => {
       await db.insert(HistoryTable).values({
         recordId,
-        content: parseJson,
+        content: parsedJson,
         aiAgentType,
-        createdAt: new Date().toString(),
+        createdAt: new Date().toISOString(),
         userEmail,
         metaData: uploadFileUrl,
       });
     });
-   return {
-  success: true,
-  recordId,
-  summary: parseJson.summary || null,
-};
+
+    // ✅ Step 6: Return the final result
+    return {
+      success: true,
+      recordId,
+      summary: parsedJson || null,
+      fileUrl: uploadFileUrl,
+    };
   }
 );
 
