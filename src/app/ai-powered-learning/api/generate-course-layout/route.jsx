@@ -57,7 +57,7 @@ export const ai = new GoogleGenAI({
 export async function POST(req) {
   try {
     const { courseId, ...formData } = await req.json();
-    const user = await currentUser();
+const user = (await currentUser()) || null;
 
     const config = { responseMimeType: "text/plain" };
     const model = "gemini-2.5-flash";

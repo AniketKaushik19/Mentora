@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 // ✅ Enroll in a course
 export async function POST(req) {
   const { courseId } = await req.json();
-  const user = await currentUser();
+const user = (await currentUser()) || null;
 
   // Check if course already enrolled
   const existingEnroll = await db

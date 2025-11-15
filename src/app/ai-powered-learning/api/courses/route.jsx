@@ -8,7 +8,7 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams?.get("courseId");
-    const user = await currentUser();
+const user = (await currentUser()) || null;
    
     if (!user) {
       return NextResponse.json([], { status: 200 });
