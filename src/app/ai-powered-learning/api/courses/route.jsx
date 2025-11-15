@@ -8,12 +8,12 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams?.get("courseId");
-const user = (await currentUser()) || null;
+    const user = (await currentUser()) || null;
    
     if (!user) {
       return NextResponse.json([], { status: 200 });
     }
- if(courseId==0){
+ if(courseId=="0"){
   const result = await db
       .select()
       .from(coursesTable)

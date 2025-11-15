@@ -10,10 +10,11 @@ import CourseCard from '../_components/CourseCard';
 function Explore() {
     const [courseList,setCourseList]=useState([]);
         const {user}=useUser();
-       useEffect(()=>{
-        user && GetCourseList();
-       },[user])
-    
+    useEffect(() => {
+      if (user) {
+       GetCourseList();
+      }
+    }, [user]);
         const GetCourseList=async()=>{
           const result=await axios.get('/ai-powered-learning/api/courses?courseId=0');
           console.log(result.data)
