@@ -72,7 +72,7 @@ const DashboardLayout = ({children}) => {
             </div>
 
             {/* //Navigation  */}
-            <nav className='p-4 space-y-2'>
+            <nav className='p-4 space-y-2 '>
                 {sidebarItems.map((item,index)=>{
                     const isActive=pathname===item.href || (item.href!=="/community/dashboard" && pathname.startsWith(item.href))
 
@@ -83,7 +83,7 @@ const DashboardLayout = ({children}) => {
                           onClick={()=>setIsSidebarOpen(false)}
                         >
                             <div className={cn(
-                                "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group hover:my-4" , isActive?"bg-linear-to-r from-purple-600/20 to-blue-600/20 border-purple-500 text-white":"text-slate-300 hover:text-white hover:bg-slate-700/50")}>
+                                "flex items-center space-x-3 px-4 py-3  rounded-xl transition-all duration-200 group" , isActive?"bg-linear-to-r from-purple-600/20 to-blue-600/20 border-purple-500 text-white":"text-slate-300 hover:text-white hover:bg-slate-700/50")}>
                                <item.icon 
                                   className={cn('h-5 w-5 transition-colors', isActive? "text-purple-400":"text-slate-400 group-hover:text-white")}
                                /> 
