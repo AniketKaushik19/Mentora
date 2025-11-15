@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 
-const isProtectedRoute=createRouteMatcher(["/dashboard(.*)","/ai-tools(.*)"])
+const isProtectedRoute=createRouteMatcher(["/dashboard(.*)","/ai-tools(.*)","/ai-powered-learning(.*)"])
 
 export default clerkMiddleware(async(auth,req)=>{
     const {userId} =await auth();
