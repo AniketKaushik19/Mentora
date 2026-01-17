@@ -56,7 +56,7 @@ function AppSidebar() {
     <Sidebar className="w-64 bg-gray-900 text-white flex flex-col">
      
     <SidebarHeader className="text-4xl m-5 font-bold bg-gradient-to-r from-purple-800  to-blue-700 bg-clip-text text-transparent">
-      <Link to={'/'}>  Mentora </Link> 
+      <Link href={'/'}>  Mentora </Link> 
       </SidebarHeader>
 
       <SidebarContent className="flex-1 px-4 ">

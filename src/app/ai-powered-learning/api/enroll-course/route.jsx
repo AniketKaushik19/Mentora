@@ -6,72 +6,100 @@ import { NextResponse } from "next/server";
 
 // ✅ Enroll in a course
 export async function POST(req) {
-  const { courseId } = await req.json();
-const user = (await currentUser()) || null;
-
-  // Check if course already enrolled
-  const existingEnroll = await db
-    .select()
-    .from(enrollCourseTable)
-    .where(
-      and(
-        eq(enrollCourseTable.userEmail, user?.primaryEmailAddress.emailAddress),
-        eq(enrollCourseTable.cid, courseId)
-      )
-    );
-
-  if (existingEnroll?.length === 0) {
-    const result = await db
-      .insert(enrollCourseTable)
-      .values({
-        cid: courseId,
-        userEmail: user?.primaryEmailAddress?.emailAddress,
-      })
-      .returning(enrollCourseTable);
-
-    return NextResponse.json(result);
-  }
-
-  return NextResponse.json({ resp: "Already Enrolled" });
-}
-
-// ✅ Fetch all enrolled courses for the user
-export async function GET(req) {
-  const user = await currentUser();
-const { searchParams } = new URL(req.url);
-    const courseId = searchParams?.get("courseId");
-
-    if(courseId){
-const result = await db
-    .select()
-    .from(coursesTable)
-    .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
-    .where(and(eq(enrollCourseTable.userEmail, user?.primaryEmailAddress.emailAddress),
-      eq(enrollCourseTable.cid,courseId)))
-    .orderBy(desc(enrollCourseTable.id));
-    
-    return NextResponse.json(result[0]);
+  try {
+    const { courseId } = await req.json();
+    if (!courseId) {
+      return NextResponse.json({ success: false, message: "Missing courseId" }, { status: 400 });
     }
-    else{
 
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+    const existingEnroll = await db
+      .select()
+      .from(enrollCourseTable)
+      .where(and(eq(enrollCourseTable.userEmail, userEmail), eq(enrollCourseTable.cid, courseId)));
+
+    if (existingEnroll.length === 0) {
       const result = await db
-    .select()
-    .from(coursesTable)
-    .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail, user?.primaryEmailAddress.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
-    
-    return NextResponse.json(result);
+        .insert(enrollCourseTable)
+        .values({ cid: courseId, userEmail })
+        .returning();
+
+      return NextResponse.json({ success: true, data: result });
+    }
+
+    return NextResponse.json({ success: false, message: "Already Enrolled" });
+  } catch (error) {
+    console.error("POST /enroll error:", error);
+    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export  async function PUT(req){
-const {completedChapter,courseId}=await req.json();
-const user=await currentUser();
+// ✅ Fetch enrolled courses
+export async function GET(req) {
+  try {
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
 
-const result=await db.update(enrollCourseTable).set({
-  completedChapters:completedChapter
-}).where(and(eq(enrollCourseTable.cid,courseId),eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress)))
-.returning(enrollCourseTable)
-return NextResponse.json(result);
+    const { searchParams } = new URL(req.url);
+    const courseId = searchParams.get("courseId");
+
+    let result;
+    if (courseId) {
+      result = await db
+        .select()
+        .from(coursesTable)
+        .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+        .where(and(eq(enrollCourseTable.userEmail, userEmail), eq(enrollCourseTable.cid, courseId)))
+        .orderBy(desc(enrollCourseTable.id));
+
+      return NextResponse.json({ success: true, data: result[0] || null });
+    } else {
+      result = await db
+        .select()
+        .from(coursesTable)
+        .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+        .where(eq(enrollCourseTable.userEmail, userEmail))
+        .orderBy(desc(enrollCourseTable.id));
+
+      return NextResponse.json({ success: true, data: result });
+    }
+  } catch (error) {
+    console.error("GET /enroll error:", error);
+    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+// ✅ Update completed chapters
+export async function PUT(req) {
+  try {
+    const { completedChapter, courseId } = await req.json();
+    if (!completedChapter || !courseId) {
+      return NextResponse.json({ success: false, message: "Missing data" }, { status: 400 });
+    }
+
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+    const result = await db
+      .update(enrollCourseTable)
+      .set({ completedChapters: completedChapter })
+      .where(and(eq(enrollCourseTable.cid, courseId), eq(enrollCourseTable.userEmail, userEmail)))
+      .returning();
+
+    return NextResponse.json({ success: true, data: result });
+  } catch (error) {
+    console.error("PUT /enroll error:", error);
+    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+  }
 }
