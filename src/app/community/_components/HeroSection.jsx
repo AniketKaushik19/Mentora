@@ -18,7 +18,7 @@ const HeroSection = () => {
                </div>
 
                <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start md:items-center md:justify-center">
-                   <Link href={"/dashboard"}>
+                   <Link href={"/community/dashboard"}>
                      <Button 
                        size={"xl"}
                        variant={"primary"}

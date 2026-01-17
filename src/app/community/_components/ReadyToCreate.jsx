@@ -12,7 +12,7 @@ const ReadyToCreate = () => {
                <p className="text-xl text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto">Join thousands of creators who are already building their audience and growing their business with our AI-powered platform.</p>
             </div>
              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center">
-                   <Link href={"/dashboard"}>
+                   <Link href={"/community/dashboard"}>
                      <Button 
                        size={"xl"}
                        variant={"primary"}
