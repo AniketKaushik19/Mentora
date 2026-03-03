@@ -1,8 +1,9 @@
 "use server"
-import { GenerativeModel } from "@google/generative-ai"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenAI } from "@google/genai";
 
-const genAI=new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+});
 //generating content
 
 export async function generateBlogContent(title, category = "", tags = []) {
@@ -10,7 +11,6 @@ export async function generateBlogContent(title, category = "", tags = []) {
         if (!title || title.trim().length === 0) {
             throw new Error("Title is required to generate content")
         }
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
         const prompt = `
 Write a comprehensive blog post with the title: "${title}"
 
@@ -33,9 +33,12 @@ Requirements:
 Do not include the title in the content as it will be added separately.
 Start directly with the introduction paragraph.
 `;
-        const result = await model.generateContent(prompt);
-        const response = await result.response
-        const content = response.text()
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt
+        });
+        let content = response.text || response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        content = content.replace(/```html|```/gi, "").trim();
 
         if (!content || content.trim().length < 100) {
             throw new Error("Generated cotent is too short or empty")
@@ -76,7 +79,6 @@ export async function improveContent(currentContent,
         if (!currentContent || currentContent.trim().length === 0) {
             throw new Error("Content is required for improvement")
         }
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
         let prompt = "";
 
         switch (improvementType) {
@@ -126,9 +128,12 @@ Requirements:
 `;
         }
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const improvedContent = response.text();
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt
+        });
+        let improvedContent = response.text || response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        improvedContent = improvedContent.replace(/```html|```/gi, "").trim();
 
         return {
             success: true,
