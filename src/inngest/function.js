@@ -231,7 +231,7 @@ export const AiRoadmapGeneratorAgent=createAgent({
 export const AiRoadmapAgent=inngest.createFunction({id:"roadmap-generator-function"},
   {event:'roadmap/generate'},
   async({event,step})=>{
-    const {roadmapId,userInput,userEmail}=await event.data;
+    const {roadmapId,userInput,userEmail}=event.data || {};
     const roadmapResult=await AiRoadmapGeneratorAgent.run("userInput : "+ userInput)
     const rawContent=roadmapResult.output[0].content;
 const rawContentJson=rawContent.replace('```json','').replace('```','')
