@@ -43,7 +43,7 @@ const sidebarItems = [
   },
   {
     title: "Courses",
-    href: "/",
+    href: "/ai-powered-learning/explore",
     icon: BookAIcon,
   },
 ];

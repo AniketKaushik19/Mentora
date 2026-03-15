@@ -29,7 +29,7 @@ const GenerateRoadmap=async()=>{
 roadmapId:roadmapId,
 userInput:userInput
   })
-  console.log("roadmap result "+result.data)
+  // console.log("roadmap result "+result.data)
   router.push('/ai-tools/ai-roadmap-agent/'+ roadmapId)
 } catch (error) {
  console.log("err raodmap "+error)

@@ -23,7 +23,7 @@ const markChapterCompleted=async()=>{
      courseId:courseId,
      completedChapter:completedChapter
     });
-    console.log(result);
+    // console.log(result);
     refreshData()
     toast.success('Chapter marked completed!')
    setLoading(false);
@@ -36,7 +36,7 @@ const completedChap=completedChapter.filter(item=>item!=selectedChapterIndex);
      courseId:courseId,
      completedChapter:completedChap
     });
-    console.log(result);
+    // console.log(result);
     refreshData()
     toast.error('Chapter marked incompleted!')
     setLoading(false);  

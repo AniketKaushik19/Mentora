@@ -140,7 +140,7 @@ const GenerateImage = async (imagePrompt) => {
       }
     );
 
-    console.log("✅ Image generated successfully");
+    // console.log("✅ Image generated successfully");
     return result.data.image;
   } catch (error) {
     console.error("❌ Image generation failed:", error.response?.data || error.message);

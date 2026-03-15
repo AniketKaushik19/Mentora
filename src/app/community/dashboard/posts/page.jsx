@@ -62,7 +62,7 @@ const post = () => {
   },[posts , searchQuery , statusFilter , sortBy])
   
   
-  console.log(filteredPosts)
+  // console.log(filteredPosts)
   if(isLoading){
     return  <BarLoader width={"100%"} color='#D8B4FE'/>
   }

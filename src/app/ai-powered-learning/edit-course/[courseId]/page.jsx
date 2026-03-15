@@ -18,7 +18,7 @@ function EditCourse({viewCourse=false}) {
     const GetCourseInfo=async()=>{
         setLoading(true);
         const result=await axios.get('/ai-powered-learning/api/courses?courseId='+courseId);
-        console.log(result.data);
+        // console.log(result.data);
         setLoading(false);
         setCourse(result.data);
     }

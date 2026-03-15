@@ -8,7 +8,7 @@ import Link from "next/link";
 import React from "react";
 
 function EnrollCourseCard({ course, enrollCourse }) {
-  // ✅ Step 1: Safely parse JSON if stored as string
+  // Safely parse JSON if stored as string
   let parsedCourseJson = null;
   try {
     parsedCourseJson =
@@ -21,13 +21,13 @@ function EnrollCourseCard({ course, enrollCourse }) {
 
   const courseJson = parsedCourseJson?.course || {};
 
-  // ✅ Step 2: Handle all possible data sources
+  // Handle all possible data sources
   const name = courseJson?.name || course?.name || "Untitled Course";
   const description =
     courseJson?.description || course?.description || "No description available.";
   const banner = course?.bannerImageUrl || "/default-banner.jpg";
 
-  // ✅ Step 3: Progress calculation
+  // Progress calculation
   const CalculatePerProgress = () => {
     const completed = enrollCourse?.completedChapters?.length ?? 0;
     const total = course?.courseContent?.length ?? 1;
@@ -55,7 +55,7 @@ function EnrollCourseCard({ course, enrollCourse }) {
           <Progress value={CalculatePerProgress()} />
         </div>
 
-        <Link href={'/ai-powered-learning/view-course/'+ course?.cid}>
+        <Link href={`/ai-powered-learning/view-course/${course?.cid}`}>
           <Button className="cursor-pointer mt-3 text-center bg-gradient-to-r from-purple-800 to-blue-700 text-white ">
             <PlayCircle className="mr-2 h-5 w-5" />
             Continue Learning

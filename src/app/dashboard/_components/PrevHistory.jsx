@@ -24,7 +24,7 @@ function PrevHistory() {
     setLoading(true);
     const result = await axios.get("/api/history");
     setUserHistory(result.data);
-    console.log(result.data)
+    // console.log(result.data)
     setLoading(false);
   };
 

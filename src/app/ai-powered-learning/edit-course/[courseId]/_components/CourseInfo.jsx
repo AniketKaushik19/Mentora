@@ -20,13 +20,13 @@ function CourseInfo({ course,viewCourse }) {
          courseId:course?.cid
 
     });
-    console.log(result.data);
+    // console.log(result.data);
     setLoading(false);
     router.replace('/ai-powered-learning')
     toast.success("Course content generated successfully");
   }
   catch(e){
-    console.log(e);
+    // console.log(e);
 setLoading(false);
 toast.error("server side error, try again");
   }

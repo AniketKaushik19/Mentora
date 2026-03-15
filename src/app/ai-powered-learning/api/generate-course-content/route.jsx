@@ -93,10 +93,10 @@ export async function POST(request) {
 
       // ✅ Get YouTube videos related to the chapter
       const youtubeData = await GetYoutubeVideo(chapter?.chapterName);
-      console.log({
-        youtubeVideo: youtubeData,
-        courseData: JSONResp,
-      });
+      // console.log({
+      //   youtubeVideo: youtubeData,
+      //   courseData: JSONResp,
+      // });
 
       return {
         youtubeVideo: youtubeData,
@@ -144,7 +144,7 @@ const GetYoutubeVideo = async (topic) => {
       title: item.snippet?.title,
     }));
 
-    console.log("youtubeVideoList", youtubeVideoList);
+    // console.log("youtubeVideoList", youtubeVideoList);
     return youtubeVideoList;
   } catch (error) {
     console.error("⚠️ YouTube API error:", error.message);

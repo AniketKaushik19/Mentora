@@ -9,7 +9,7 @@ function AiResumeAnalyzer() {
   const [aiReport, setAiReport] = useState();
   useEffect(() => {
     resumeId && GetResumeAnalyzerRecord();
-    console.log(resumeId)
+    // console.log(resumeId)
   }, [resumeId]);
   const GetResumeAnalyzerRecord = async () => {
     const result = await axios.get(`/api/history?recordId=${resumeId}`);

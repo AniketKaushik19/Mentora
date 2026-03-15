@@ -15,7 +15,7 @@ export async function POST(req) {
       },
     });
   const runId = resultIds?.ids[0];
-  console.log("rundid "+runId )
+  // console.log("rundid "+runId )
   let runStatus;
   //use polling to check run status
   while (true) {
@@ -24,7 +24,7 @@ export async function POST(req) {
      if (runStatus?.data[0]?.status === "Cancelled") break;
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-console.log(JSON.stringify(runStatus.data?.[0], null, 2));
+// console.log(JSON.stringify(runStatus.data?.[0], null, 2));
   return NextResponse.json(runStatus.data?.[0].output || runStatus.data?.[0].output?.output[0]  );
 }
 

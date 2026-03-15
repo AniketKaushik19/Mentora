@@ -20,7 +20,7 @@ function RoadmapGeneratorAgent() {
   const GetRoadmapDetails = async () => {
     try {
       const result = await axios.get("/api/history?recordId=" + roadmapid);
-      console.log(result.data);
+      // console.log(result.data);
       setRoadMapDetail(result.data);
     } catch (error) {
       console.log("error in get :" + error);

@@ -40,11 +40,11 @@ const router=useRouter();
       ...prev,
       [field]: value,
     }));
-    console.log({ [field]: value }); // ✅ For immediate feedback
+    // console.log({ [field]: value }); // ✅ For immediate feedback
   };
 
   const onGenerate =async () => {
-    console.log(formData); // ✅ Now logs all correctly updated fields
+    // console.log(formData); // ✅ Now logs all correctly updated fields
     const courseId=uuidv4();
     try{
     setLoading(true);
@@ -52,13 +52,13 @@ const router=useRouter();
       ...formData,
       courseId:courseId
     });
-    console.log(result.data);
+    // console.log(result.data);
     setLoading(false);
     router.push('/ai-powered-learning/edit-course/'+result.data?.courseId);
     }
     catch(err){
       setLoading(false);
-      console.log(err);
+      // console.log(err);
     }
   };
 

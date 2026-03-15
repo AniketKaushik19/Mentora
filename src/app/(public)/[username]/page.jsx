@@ -135,7 +135,7 @@ export default function username({ params }) {
           <div className="flex items-center justify-center text-sm text-slate-500">
             <Calendar className="h-4 w-4 mr-2" />
             Joined{" "}
-            {console.log(user._creationTime)}
+            {/* {console.log(user._creationTime)} */}
             {new Date(user._creationTime).toLocaleDateString("en-US", {
               day:"numeric",
               month: "long",

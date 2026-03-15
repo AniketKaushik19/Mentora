@@ -16,7 +16,7 @@ function CourseList() {
 
     const GetCourseList=async()=>{
       const result=await axios.get('/ai-powered-learning/api/courses');
-      console.log(result.data)
+      // console.log(result.data)
       setCourseList(result.data);
     }
   return (

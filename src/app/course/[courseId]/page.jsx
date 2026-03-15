@@ -16,7 +16,7 @@ function Course() {
       const GetEnrollCourseById = async () => {
         try {
           const result = await axios.get("/ai-powered-learning/api/enroll-course?courseId="+courseId);
-          console.log(result.data);
+          // console.log(result.data);
           setCourseInfo(result.data);
         } catch (error) {
           console.error("Error fetching enrolled courses:", error);

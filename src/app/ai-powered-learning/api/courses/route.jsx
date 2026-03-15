@@ -18,7 +18,7 @@ export async function GET(req) {
       .select()
       .from(coursesTable)
       .where(sql`${coursesTable.courseContent}::jsonb!= '{}'::jsonb`);
-      console.log(result);
+      // console.log(result);
       return NextResponse.json(result);
  }
     if (courseId) {

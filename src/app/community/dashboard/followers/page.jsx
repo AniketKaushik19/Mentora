@@ -31,7 +31,7 @@ const followersPage = () => {
       api.follows.isFollowing,
       currentConvexUser?._id ? { followingId: currentConvexUser._id } : "skip"
     );
-    console.log(isFollowing , currentConvexUser?._id)
+    // console.log(isFollowing , currentConvexUser?._id)
     // Follow mutation
     const toggleFollow = useConvexMutation(api.follows.toggleFollow);
    // Default values if no data
@@ -50,7 +50,6 @@ const followersPage = () => {
       toast.error(error.message || "Failed to update follow status");
     }
   };
-  console.log()
   return (
     <div className='m-4 p-2'>
         {followingUsers?.map((user , index)=>(
