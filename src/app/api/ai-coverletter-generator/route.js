@@ -1,47 +1,56 @@
-import { inngest } from "@/inngest";
-import axios from "axios";
 import { NextResponse } from "next/server";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+const systemInstruction = `
+You are an AI Cover Letter Generator.
+
+Generate formal, concise and professional cover letters 
+as per Indian business communication standards.
+
+Follow this structure:
+- Recipient Info
+- Subject
+- Salutation
+- Introduction
+- Body
+- Closing
+- Sign Off
+
+200–250 words.
+No placeholders.
+No meta-text.
+Output only final formatted cover letter.
+`;
 
 export async function POST(req) {
-  const { userInput } = await req.json();
-  const resultIds = await inngest.send({
-      name: "coverletter/generate",
-      data: {
-          userInput: userInput,
-        },
-    });
-
-  const runId = resultIds?.ids[0];
-  let runStatus;
-
-  while (true) {
-    try {
-        runStatus = await getRuns(runId);
-        if (runStatus?.data[0]?.status === "Completed") break;
-        await new Promise((resolve) => setTimeout(resolve, 500));
-            } catch (error) {
-        console.log(error)
-    }
-  }
-  return NextResponse.json(runStatus.data?.[0].output?.output[0]);
-}
-
-export async function getRuns(runId) {
   try {
-    // Use local dev URL only if running locally
-    const baseUrl =
-      process.env.INNGEST_SERVER_HOST ||
-      "https://api.inngest.com"; // Cloud endpoint fallback
+    const { userInput } = await req.json();
 
-    const result = await axios.get(`${baseUrl}/v1/events/${runId}/runs`, {
-      headers: {
-        Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
+    if (!userInput) {
+      return NextResponse.json({ error: "userInput is required" }, { status: 400 });
+    }
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: userInput,
+      config: {
+        systemInstruction,
       },
     });
 
-    return result.data;
+    const output = response.text || response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    return NextResponse.json({
+        content: output,
+        role: "model",
+        type: "text"
+    });
   } catch (error) {
-    console.error("Error fetching run status:", error.response?.data || error);
-    return null;
+    console.error("AI Cover Letter Generator Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

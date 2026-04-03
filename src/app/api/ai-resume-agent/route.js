@@ -1,8 +1,45 @@
 import { NextResponse } from "next/server";
 import { extractTextFromPDF } from "@/lib/pdfParser";
 import { currentUser } from "@clerk/nextjs/server";
-import { inngest } from "@/inngest";
-import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
+import ImageKit from "imagekit";
+import { db } from "@/config/db";
+import { HistoryTable } from "@/config/schema";
+
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT,
+});
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+const systemInstruction = `
+You are an advanced AI Resume Analyzer.
+
+You must return ONLY valid JSON in this structure:
+
+{
+  "overall_score": number,
+  "overall_feedback": "string",
+  "summary_comment": "string",
+  "sections": {
+    "contact_info": { "score": number, "comment": "string" },
+    "experience": { "score": number, "comment": "string" },
+    "education": { "score": number, "comment": "string" },
+    "skills": { "score": number, "comment": "string" }
+  },
+  "tips_for_improvement": ["string"],
+  "whats_good": ["string"],
+  "needs_improvement": ["string"]
+}
+
+Do not wrap in markdown.
+Do not explain anything.
+Return JSON only.
+`;
 
 export async function POST(req) {
   try {
@@ -15,65 +52,85 @@ export async function POST(req) {
       throw new Error("Missing resume file");
     }
 
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) {
+      throw new Error("Missing userEmail");
+    }
+
     const arrayBuffer = await resumeFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // 🧠 Extract text using pdfreader
-    const pdfText = await extractTextFromPDF(buffer);
+    // 🧠 Attempt to extract text using pdfreader (optional fallback)
+    let pdfText = "";
+    try {
+      pdfText = await extractTextFromPDF(buffer);
+    } catch (e) {
+      console.warn("pdfreader failed, relying entirely on Gemini vision/multimodal capabilities.");
+    }
+
     const base64 = buffer.toString("base64");
 
-    const resultIds = await inngest.send({
-      name: "AiResumeAgent",
-      data: {
-        recordId,
-        base64ResumeFile: base64,
-        pdfText: pdfText || "",
-        aiAgentType: "/ai-tools/ai-resume-analyzer",
-        userEmail: user?.primaryEmailAddress?.emailAddress || null,
+    // Upload to ImageKit
+    const uploaded = await imagekit.upload({
+      file: base64,
+      fileName: `${Date.now()}.pdf`,
+      isPublished: true,
+    });
+
+    const uploadFileUrl = uploaded.url;
+
+    // Call Gemini with the PDF directly
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        {
+          inlineData: {
+            data: base64,
+            mimeType: "application/pdf",
+          },
+        },
+        pdfText ? `Parsed text fallback:\n${pdfText}` : "Analyze this resume document.",
+      ],
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
       },
     });
 
-    const runId = resultIds?.ids?.[0];
-    let runStatus;
+    let rawContent = response.text || response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    
+    rawContent = rawContent
+      .replace(/^```json/i, "")
+      .replace(/^```/, "")
+      .replace(/```$/, "")
+      .trim();
 
-    while (true) {
-      runStatus = await getRuns(runId);
-      const status = runStatus?.data?.[0]?.status;
-      if (status === "Completed" || status === "Cancelled") break;
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    let parsedJson;
+    try {
+      parsedJson = JSON.parse(rawContent);
+    } catch (err) {
+      console.error("AI RAW OUTPUT:", rawContent);
+      throw new Error("Failed to parse AI response JSON.");
     }
 
-    const output =
-      runStatus?.data?.[0]?.output?.output?.[0] ||
-      runStatus?.data?.[0]?.output;
+    // Save to Database
+    await db.insert(HistoryTable).values({
+      recordId,
+      content: parsedJson,
+      aiAgentType: "/ai-tools/ai-resume-analyzer",
+      createdAt: new Date().toISOString(),
+      userEmail,
+      metaData: uploadFileUrl,
+    });
 
-    if (!output) {
-      return NextResponse.json(
-        { error: "Missing or invalid output data from Inngest" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(output);
+    return NextResponse.json({
+      success: true,
+      recordId,
+      summary: parsedJson,
+      fileUrl: uploadFileUrl,
+    });
   } catch (error) {
     console.error("❌ Error processing resume:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
-
-async function getRuns(runId) {
-  try {
-    const result = await axios.get(
-      `${process.env.INNGEST_SERVER_HOST}/v1/events/${runId}/runs`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`,
-        },
-      }
-    );
-    return result.data;
-  } catch (error) {
-    console.error("Error fetching run status:", error);
-    return null;
   }
 }

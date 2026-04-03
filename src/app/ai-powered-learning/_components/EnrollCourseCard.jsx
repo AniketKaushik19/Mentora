@@ -67,3 +67,4 @@ function EnrollCourseCard({ course, enrollCourse }) {
 }
 
 export default EnrollCourseCard;
+

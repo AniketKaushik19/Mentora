@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   SignInButton,
   SignUpButton,
@@ -8,92 +8,124 @@ import {
   UserButton,
 } from '@clerk/nextjs'
 import { Button } from './ui/button'
-import { Authenticated , Unauthenticated } from 'convex/react'
+import { Authenticated, Unauthenticated } from 'convex/react'
 import useStoreUser from '../../hooks/use-store-user'
-import { BarLoader} from "react-spinners"
+import { BarLoader } from "react-spinners"
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard } from 'lucide-react'
- const Header = () => {
+import { LayoutDashboard, Moon, Sun, Sparkles } from 'lucide-react'
+import { useTheme } from "next-themes"
+
+const Header = () => {
   const { isLoading, isAuthenticated } = useStoreUser();
-  const path=usePathname()
-  const router=useRouter()
-  //Hide header on public profile and post pages (but not on feed)
-  
-  
-  //Redirect authenticated users from landing page to feed
-  useEffect(()=>{
-    if(!isLoading && isAuthenticated && path==="/"){
+  const { theme, setTheme } = useTheme()
+  const path = usePathname()
+  const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => setMounted(true), [])
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && path === "/") {
       router.push("/")
     }
-  },[isLoading , isAuthenticated , path ])
-  // if(path!=="/" && path!=="/feed" && path.split("/").length>=2){ 
-  //   return null
-  // }
+  }, [isLoading, isAuthenticated, path, router])
+
+  const isVisible = (
+    path === "/ai-tools" || 
+    path === "/" || 
+    path === "/feed" || 
+    path === "/community" || 
+    path.startsWith('/ai-powered-learning')
+  );
+
   return (
-    <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-3xl px-4 ${(path==="/ai-tools" || path==="/" || path==="/feed" || path==="/community" || path==='/ai-powered-learning' || path==='/ai-powered-learning/my-courses' || path==='/ai-powered-learning/explore')?"visible":"hidden"}`}>
-        <div className='backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-2'>
-        <Link href={isAuthenticated?"/":"/"} className='shrink-0'>
-          {/* <Image
-            src="/logo.png"
-            alt="create.logo"
-            width={96}
-            height={32}
-            className='h-8 sm:h-10 w-auto object-contain'
-          /> */}
-           <span className='bg-linear-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text font-semibold text-2xl '>Mentora</span>
+    <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-4xl px-4 transition-all duration-500 ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"}`}>
+      <div className='backdrop-blur-xl bg-white/70 dark:bg-black/40 border border-black/5 dark:border-white/10 rounded-full px-4 py-2 flex items-center justify-between shadow-2xl shadow-black/5 dark:shadow-purple-500/10'>
+        
+        {/* Logo */}
+        <Link href="/" className='shrink-0 pl-2'>
+          <div className='flex items-center gap-2 group'>
+             <span className="text-2xl font-black tracking-tighter bg-linear-to-tr from-purple-500 via-purple-400 to-blue-500 bg-clip-text text-transparent drop-shadow-sm">
+    Mentora
+  </span>
+          </div>
         </Link>
 
-        {(path==="/" || path==='/community') && (
-          <div className='hidden lg:flex space-x-6 flex-1 justify-center'>
-         <Link href="/community"
-                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
-            >
-               Community
-            </Link>
-            <Link href="/ai-powered-learning"
-                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
-            >
-               Courses
-            </Link>
-            <Link href="/ai-tools"
-                  className='text-white font-medium transition-all duration-300 hover:text-purple-300 cursor-pointer'
-            >
-               AI Tools
-            </Link>
-          </div>
+        {/* Navigation - Desktop */}
+        {(path === "/" || path === '/community' || path === '/ai-tools') && (
+          <nav className='hidden lg:flex items-center bg-black/5 dark:bg-white/5 rounded-full px-1 py-1 mx-4'>
+            {[
+              { name: 'Community', href: '/community' },
+              { name: 'Courses', href: '/ai-powered-learning' },
+              { name: 'AI Tools', href: '/ai-tools' }
+            ].map((link) => (
+              <Link 
+                key={link.name}
+                href={link.href}
+                className={`px-5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+                  path === link.href 
+                  ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' 
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
         )}
 
-      <div className='flex items-center gap-2 sm:gap-3 shrink-0'>
-        <Authenticated>
-           <Link href={"/community/dashboard"}>
-              <Button variant={"outline"} className={"sm:flex md:flex cursor-pointer"} size={"sm"}>
-                 <LayoutDashboard className='h-4 w-4'/>
-                 <span className='hidden md:inline ml-2 '>Dashboard</span>
-              </Button>
-           </Link>
-           <UserButton />
-        </Authenticated>
-        <Unauthenticated>
-              <SignInButton>
-                <Button size="sm" variant={"ghost"}>
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton>
-                 <Button variant={"primary"} size={"sm"} className={"whitespace-nowrap"}>
-                    Get Started
-                 </Button>
-              </SignUpButton>
-              
-            </Unauthenticated>
-      </div>   
+        {/* Actions */}
+        <div className='flex items-center gap-2 shrink-0'>
+          
+          {/* Theme Toggle Button */}
+          {/* {mounted && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full w-9 h-9 hover:bg-black/5 dark:hover:bg-white/5"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-[1.1rem] w-[1.1rem] text-amber-400 rotate-0 scale-100 transition-all" />
+              ) : (
+                <Moon className="h-[1.1rem] w-[1.1rem] text-slate-700 rotate-0 scale-100 transition-all" />
+              )}
+            </Button>
+          )} */}
 
-            {isLoading && (
-              <div className='fixed bottom-0 left-0 w-full z-40 flex justify-center'>
-                <BarLoader width={"95%"} color="#D8B4FE"/>
-              </div>
-            )}
+          <Authenticated>
+            <Link href={"/community/dashboard"}>
+              <Button variant="outline" size="sm" className="hidden md:flex rounded-full border-black/10 dark:border-white/10 font-bold text-xs uppercase">
+                <LayoutDashboard className='h-3.5 w-3.5 mr-2'/>
+                Dashboard
+              </Button>
+            </Link>
+            <div className='scale-90 hover:scale-100 transition-transform'>
+              <UserButton appearance={{ elements: { userButtonAvatarBox: "rounded-full" }}} />
+            </div>
+          </Authenticated>
+
+          <Unauthenticated>
+            <SignInButton mode="modal">
+              <Button size="sm" variant="ghost" className="text-xs font-bold uppercase tracking-wider">
+                Sign In
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button variant="primary" size="sm" className="rounded-full px-5 text-xs font-bold uppercase tracking-wider shadow-lg shadow-primary/20">
+                Join Now
+              </Button>
+            </SignUpButton>
+          </Unauthenticated>
+        </div>   
+
+        {isLoading && (
+          <div className='fixed bottom-0 left-0 w-full z-40'>
+            <BarLoader width={"100%"} color="oklch(0.70 0.12 250)" />
+          </div>
+        )}
       </div>
     </header>
   )

@@ -56,7 +56,7 @@ export const getPublishedPostsByUsername=query({
 export const getPublishedPost=query({
     args:{
         username:v.string(),
-        postId:v.id("posts"),
+        postId:v.string(), // accepting string instead of v.id to prevent URL param validator errors
     },
     handler:async(ctx,args)=>{
         //Get the user by username
@@ -69,7 +69,12 @@ export const getPublishedPost=query({
             return null;
         }
 
-        const post=await ctx.db.get(args.postId)
+        const normalizedId = ctx.db.normalizeId("posts", args.postId);
+        if(!normalizedId){
+            return null;
+        }
+
+        const post=await ctx.db.get(normalizedId)
 
         if(!post){
             return null

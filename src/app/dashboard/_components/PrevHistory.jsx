@@ -1,98 +1,147 @@
 "use client";
 
+import axios from "axios";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
 import { aiToolsList } from "./AItools";
-import axios from "axios";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { MoveLeftIcon, SaveAllIcon } from "lucide-react";
+import { MoveLeftIcon, History, ArrowRight, Clock, Trash2 } from "lucide-react";
 
 function PrevHistory() {
   const [userHistory, setUserHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
   useEffect(() => {
     GetHistory();
   }, []);
 
   const GetHistory = async () => {
     setLoading(true);
-    const result = await axios.get("/api/history");
-    setUserHistory(result.data);
-    // console.log(result.data)
-    setLoading(false);
+    try {
+      const result = await axios.get("/api/history");
+      setUserHistory(result.data);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const GetAgentName = (path) => {
     return aiToolsList.find((item) => item.path === path);
   };
 
-  // Conditionally slice history
   const filteredHistory =
     pathname !== "/my-history" ? userHistory.slice(0, 5) : userHistory;
 
-    return (
-      <div className={`mt-5 p-5 border rounded-xl w-full ${ pathname === "/my-history" && 'mx-5 md:mx-20'}`}>
-      { pathname === "/my-history" && <Button variant={"primary"} onClick={()=>router.push('/')} className="mb-10"><MoveLeftIcon/> Back</Button>} 
-      <h2 className="font-medium">Previous History</h2>
-      <p className="text-gray-500 text-sm">
-        What you previously worked on — find it here
-      </p>
-
-      {loading && (
-        <div>
-          {[1, 2, 3, 4, 5, 6].map((item, index) => (
-            <Skeleton key={index} className="mt-4 h-[50px] w-full rounded-md" />
-          ))}
-        </div>
+  return (
+    <div className={`w-full transition-all duration-500 ${pathname === "/my-history" ? 'max-w-5xl mx-auto p-6 md:p-12' : 'p-2'}`}>
+      
+      {/* Conditionally show back button for Full History Page */}
+      {pathname === "/my-history" && (
+        <Button 
+          variant="ghost" 
+          onClick={() => router.push('/')} 
+          className="mb-8 group text-muted-foreground hover:text-primary transition-all p-0"
+        >
+          <MoveLeftIcon className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" /> 
+          Back to Dashboard
+        </Button>
       )}
 
-      {!loading && filteredHistory.length === 0 ? (
-        <div className="flex flex-col items-center justify-center my-5">
-          <Image src="/resume.png" alt="bulb" width={50} height={50} />
-          <h2>You do not have any history</h2>
-          <Button className="my-1" asChild>
-            <Link href="/ai-tools">Explore AI Tools</Link>
+      <div className="flex items-center justify-between mb-6 px-1">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
+            <History className="w-5 h-5 text-primary" /> Previous History
+          </h2>
+          <p className="text-muted-foreground text-xs md:text-sm mt-1">
+            Pick up right where you left off.
+          </p>
+        </div>
+      </div>
+
+      {/* Loading State */}
+      {loading ? (
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map((item) => (
+            <Skeleton key={item} className="h-20 w-full rounded-2xl bg-muted/50" />
+          ))}
+        </div>
+      ) : filteredHistory.length === 0 ? (
+        /* Empty State */
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-3xl bg-muted/5">
+          <div className="p-4 bg-muted rounded-full mb-4">
+            <History className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="font-semibold text-lg">No history found</h2>
+          <p className="text-muted-foreground text-sm mb-6">You haven't used any AI tools yet.</p>
+          <Button onClick={() => router.push('/ai-tools')} className="rounded-xl font-bold shadow-lg shadow-primary/20">
+            Explore AI Tools
           </Button>
         </div>
       ) : (
-        <div>
-          {filteredHistory.map((history, index) => (
-            <Link
-              key={index}
-              href={`${history.aiAgentType}/${history.recordId}`}
-            >
-              <div className="flex justify-between items-center my-3 border p-3 rounded">
-                <div className="flex gap-5">
-                  <Image
-                    src={
-                      GetAgentName(history.aiAgentType)?.icon || "/cover.png"
-                    }
-                    alt="image"
-                    width={20}
-                    height={10}
-                  />
-                  <h2>
-                    {
-                    history?.content?.roadmapTitle ||
-                      history?.content[0]?.content ||
-                      'Score: '+ history?.content?.overall_score
-                      } 
-                  </h2>
+        /* History List */
+        <div className="space-y-3">
+          {filteredHistory.map((history, index) => {
+            const agent = GetAgentName(history.aiAgentType);
+            return (
+              <Link
+                key={index}
+                href={`${history.aiAgentType}/${history.recordId}`}
+                className="group block"
+              >
+                <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-card hover:bg-accent/50 hover:border-primary/30 transition-all duration-300 shadow-sm hover:shadow-md">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                      <Image
+                        src={agent?.icon || "/cover.png"}
+                        alt="icon"
+                        width={24}
+                        height={24}
+                        className="opacity-90 grayscale group-hover:grayscale-0 transition-all"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <h3 className="font-bold text-sm md:text-base text-foreground line-clamp-1">
+                        {history?.content?.roadmapTitle ||
+                         (typeof history?.content[0]?.content === 'string' ? history?.content[0]?.content : null) ||
+                         (history?.content?.overall_score ? `Resume Score: ${history.content.overall_score}%` : 'Untitled Session')}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
+                          {agent?.name || "AI Agent"}
+                        </span>
+                        <span className="text-muted-foreground opacity-30">•</span>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+                          <Clock className="w-3 h-3" />
+                          {new Date(history.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
-                <h2>{GetAgentName(history.aiAgentType)?.name}</h2>
-              </div>
-              <h2 className="text-gray-500 text-xs">{history.createdAt}</h2>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
-       { pathname !== "/my-history" && <Button variant={"primary"} className="my-3 " onClick={()=>router.push('/my-history')}><SaveAllIcon/>Show All</Button>}
+
+      {/* Show All Button - Compact Version */}
+      {pathname !== "/my-history" && filteredHistory.length > 0 && (
+        <Button 
+          variant="outline" 
+          className="w-full mt-6 rounded-xl border-primary/20 text-primary hover:bg-primary/5 font-bold text-xs uppercase tracking-widest py-6"
+          onClick={() => router.push('/my-history')}
+        >
+          View Full Activity Log <ArrowRight className="ml-2 w-3 h-3" />
+        </Button>
+      )}
     </div>
   );
 }
