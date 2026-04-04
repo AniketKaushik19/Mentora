@@ -54,17 +54,7 @@ function ChapterContent({ courseInfo, refreshData }) {
     setLoading(false);
   };
 
-  // Loading / empty state
-  if (!courseInfo) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2Icon className="w-10 h-10 animate-spin text-purple-400" />
-          <p className="text-gray-400 text-sm">Loading chapter...</p>
-        </div>
-      </div>
-    );
-  }
+  // The page.jsx now handles the loading / empty state so courseInfo is guaranteed to be available here when rendered.
 
   return (
     <div className="flex-1 min-h-screen overflow-y-auto bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">

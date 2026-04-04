@@ -5,7 +5,7 @@ import ChapterContent from './_components/ChapterContent'
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { SelectedChapterIndexProvider } from '@/app/context/SelectedChapterindexContext';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Loader2Icon } from 'lucide-react';
 
 function Course() {
     const {courseId}=useParams();
@@ -25,6 +25,17 @@ function Course() {
             console.error("Error fetching enrolled courses:", error);
         }
     };
+
+    if (!courseInfo) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-gray-950">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2Icon className="w-12 h-12 animate-spin text-purple-500" />
+                    <p className="text-gray-400 text-lg font-medium animate-pulse">Loading course details...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <SelectedChapterIndexProvider>
