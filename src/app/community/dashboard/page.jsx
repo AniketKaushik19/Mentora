@@ -86,7 +86,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Link href="/dashboard/create">
+        <Link href="/community/dashboard/create">
           <Button variant={"primary"}>
             <PlusCircle className="h-4 w-4 mr-2" />
             Create New Post
