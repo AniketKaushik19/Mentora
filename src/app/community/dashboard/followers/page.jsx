@@ -7,7 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useConvexMutation } from '@/hooks/use-convex-query';
-import { UserPlus } from 'lucide-react';
+import { Loader2, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { UserCheck } from 'lucide-react';
 const followersPage = () => {
@@ -17,7 +17,7 @@ const followersPage = () => {
       currentUser? {}:"skip"
     )
 
-  const { data: followingUsers } = useConvexQuery(
+  const { data: followingUsers , isLoading:follwingLoading } = useConvexQuery(
     api.follows.getFollowingUsers,
     currentConvexUser?._id ? { followerId: currentConvexUser?._id } : "skip"
   );
@@ -50,9 +50,22 @@ const followersPage = () => {
       toast.error(error.message || "Failed to update follow status");
     }
   };
+  if(follwingLoading){
+     return <div className="flex items-center justify-center h-screen">
+      <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+    </div>
+
+  }
   return (
     <div className='m-4 p-2'>
-        {followingUsers?.map((user , index)=>(
+       {followingUsers?.length<1 ? <div className="flex justify-center mt-20">
+  <div className="bg-gray-100 p-6 rounded-xl shadow-md text-center">
+    <p className="text-4xl font-bold text-gray-700">No Followers</p>
+    <p className="text-gray-500 mt-2">Start connecting with people!</p>
+  </div>
+</div>:
+       
+        followingUsers?.map((user , index)=>(
            <Card
                  className={`card-glass hover:border-purple-500/50 transition-colors p-2`}
                  key={index}
@@ -103,7 +116,8 @@ const followersPage = () => {
                   </div>
               </CardContent>
            </Card>
-        ))}
+        ))
+      }
     </div>
   )
 }
