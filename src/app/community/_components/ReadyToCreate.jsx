@@ -12,7 +12,7 @@ const ReadyToCreate = () => {
                <p className="text-xl text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto">Join thousands of creators who are already building their audience and growing their business with our AI-powered platform.</p>
             </div>
              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center">
-                   <Link href={"/community/dashboard"}>
+                   {/* <Link href={"/community/dashboard"}>
                      <Button 
                        size={"xl"}
                        variant={"primary"}
@@ -21,7 +21,7 @@ const ReadyToCreate = () => {
                         Start Creating for Free
                         <ArrowRight className="h-4 w-4"/>
                      </Button>
-                   </Link>
+                   </Link> */}
                    <Link href={"/feed"}>
                      <Button 
                        size={"xl"}

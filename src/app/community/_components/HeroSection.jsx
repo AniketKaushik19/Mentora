@@ -19,14 +19,14 @@ const HeroSection = () => {
 
                <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start md:items-center md:justify-center">
                    <Link href={"/community/dashboard"}>
-                     <Button 
+                     {/* <Button 
                        size={"xl"}
                        variant={"primary"}
                        className={"rounded-full w-full sm:w-auto text-white p-2 cursor-pointer"}
                      >
                         Start Creating for Free 
                         <ArrowRight className="h-4 w-4"/>
-                     </Button>
+                     </Button> */}
                    </Link>
                    <Link href={"/feed"}>
                      <Button 
