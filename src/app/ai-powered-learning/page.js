@@ -5,7 +5,7 @@ import EnrollCourseList from "./_components/EnrollCourseList";
 
 const AIPoweredLearningPage = () => {
   return (
-    <div className=" mx-5 mt-20">
+    <div className="mx-4 mt-10">
       <WelcomeBanner/>
       <EnrollCourseList/>
       <CourseList/>

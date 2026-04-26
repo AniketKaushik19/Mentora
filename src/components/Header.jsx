@@ -36,8 +36,7 @@ const Header = () => {
     path === "/ai-tools" || 
     path === "/" || 
     path === "/feed" || 
-    path === "/community" || 
-    path.startsWith('/ai-powered-learning')
+    path === "/community" 
   );
 
   return (

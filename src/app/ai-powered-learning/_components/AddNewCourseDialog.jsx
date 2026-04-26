@@ -18,14 +18,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Axis3DIcon, Loader2Icon, Sparkle } from "lucide-react";
+import { Loader2Icon, Terminal, Plus, Cpu, Layers } from "lucide-react";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from "next/navigation";
 
-
 function AddNewCourseDialog({ children }) {
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -34,143 +33,137 @@ function AddNewCourseDialog({ children }) {
     category: "",
     level: "",
   });
-const router=useRouter();
+  const router = useRouter();
+
   const onHandleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // console.log({ [field]: value }); // ✅ For immediate feedback
   };
 
-  const onGenerate =async () => {
-    // console.log(formData); // ✅ Now logs all correctly updated fields
-    const courseId=uuidv4();
-    try{
-    setLoading(true);
-    const result =await axios.post('/ai-powered-learning/api/generate-course-layout',{
-      ...formData,
-      courseId:courseId
-    });
-    // console.log(result.data);
-    setLoading(false);
-    router.push('/ai-powered-learning/edit-course/'+result.data?.courseId);
-    }
-    catch(err){
+  const onGenerate = async () => {
+    const courseId = uuidv4();
+    try {
+      setLoading(true);
+      const result = await axios.post('/ai-powered-learning/api/generate-course-layout', {
+        ...formData,
+        courseId: courseId
+      });
       setLoading(false);
-      // console.log(err);
+      router.push('/ai-powered-learning/edit-course/' + result.data?.courseId);
+    }
+    catch (err) {
+      setLoading(false);
     }
   };
-
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
+      {/* Updated Dialog Content to Deep Dark Theme */}
+      <DialogContent className="bg-[#0b0b0b] border-white/10 text-slate-200 max-w-md">
         <DialogHeader>
-          <DialogTitle>Create New Course Using AI</DialogTitle>
+          <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase tracking-tight text-white">
+            <Cpu className="w-5 h-5 text-indigo-500" /> Initialize Course
+          </DialogTitle>
           <DialogDescription asChild>
-            <div className="flex flex-col gap-3 mt-2">
-              {/* ✅ FIXED: onChange added to Input, not label */}
-              <div>
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  Course Name
+            <div className="flex flex-col gap-5 mt-6">
+              
+              {/* Field: Course Name */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                  Course Identification
                 </label>
                 <Input
-                  placeholder="Course Name"
-                  className="mt-2"
+                  placeholder="e.g. Advanced Quantum Computing"
+                  className="bg-white/5 border-white/10 focus:border-white/20 h-12 rounded-xl text-white placeholder:text-slate-600"
                   value={formData.name}
-                  onChange={(e) =>
-                    onHandleInputChange("name", e.target.value)
-                  }
+                  onChange={(e) => onHandleInputChange("name", e.target.value)}
                 />
               </div>
 
-              {/* ✅ FIXED: onChange moved to Input */}
-              <div>
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  Course Description (Optional)
+              {/* Field: Description */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                  Scope Definition
                 </label>
                 <Input
-                  placeholder="Course Description"
-                  className="mt-2"
+                  placeholder="Briefly describe the learning objectives..."
+                  className="bg-white/5 border-white/10 focus:border-white/20 h-12 rounded-xl text-white placeholder:text-slate-600"
                   value={formData.description}
-                  onChange={(e) =>
-                    onHandleInputChange("description", e.target.value)
-                  }
+                  onChange={(e) => onHandleInputChange("description", e.target.value)}
                 />
               </div>
 
-              {/* ✅ FIXED: onChange moved to Input */}
-              <div>
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  No. of Chapters
+              {/* Grid for small inputs */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                    Modules
+                  </label>
+                  <Input
+                    type="number"
+                    className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+                    value={formData.noOfChapters}
+                    onChange={(e) => onHandleInputChange("noOfChapters", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                    Difficulty
+                  </label>
+                  <Select onValueChange={(v) => onHandleInputChange("level", v)}>
+                    <SelectTrigger className="bg-white/5 border-white/10 h-12 rounded-xl text-white">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#111] border-white/10 text-white">
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="moderate">Moderate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                  Taxonomy / Tags
                 </label>
                 <Input
-                  placeholder="No. of chapters"
-                  type="number"
-                  className="mt-2"
-                  value={formData.noOfChapters}
-                  onChange={(e) =>
-                    onHandleInputChange("noOfChapters", e.target.value)
-                  }
+                  placeholder="Tech, AI, Backend..."
+                  className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+                  value={formData.category}
+                  onChange={(e) => onHandleInputChange("category", e.target.value)}
                 />
               </div>
 
-              <div className="flex items-center gap-3">
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  Include Video
-                </label>
+              {/* Video Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/5 mt-2">
+                <div className="flex flex-col">
+                   <span className="text-xs font-bold text-slate-300">Multimedia Assets</span>
+                   <span className="text-[10px] text-slate-500 uppercase tracking-wider">Include AI curated videos</span>
+                </div>
                 <Switch
                   checked={formData.includeVideo}
-                  onCheckedChange={(checked) =>
-                    onHandleInputChange("includeVideo", checked)
-                  }
+                  onCheckedChange={(c) => onHandleInputChange("includeVideo", c)}
                 />
               </div>
 
-              <div>
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  Difficulty Level
-                </label>
-                <Select
-                  onValueChange={(value) =>
-                    onHandleInputChange("level", value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Difficulty Level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="moderate">Moderate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* ✅ FIXED: onChange moved to Input */}
-              <div>
-                <label className="bg-gradient-to-r from-purple-500 to-blue-700 bg-clip-text text-transparent font-bold">
-                  Category
-                </label>
-                <Input
-                  placeholder="Category (Separated by comma)"
-                  className="mt-2"
-                  value={formData.category}
-                  onChange={(e) =>
-                    onHandleInputChange("category", e.target.value)
-                  }
-                />
-              </div>
-
-              <div>
+              <div className="pt-4">
                 <Button
-                  onClick={onGenerate} disabled={loading}
-                  className="w-full cursor-pointer bg-gradient-to-r from-purple-800 to-blue-700 text-white"
+                  onClick={onGenerate} 
+                  disabled={loading || !formData.name}
+                  className="w-full h-14 cursor-pointer bg-white text-black hover:bg-slate-200 transition-all rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-white/5 gap-2"
                 >
-                {loading?<Loader2Icon className="animate-spin"/>:
-                  <Sparkle />} Generate Course
+                  {loading ? (
+                    <Loader2Icon className="animate-spin w-4 h-4" />
+                  ) : (
+                    <>
+                      <Terminal className="w-4 h-4" /> Generate Protocol
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
