@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
-import { TrendingUp, UserPlus, Loader2, Sparkles } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrendingUp, UserPlus, Loader2, Sparkles, Plus, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "../../../../convex/_generated/api";
 import { useConvexQuery, useConvexMutation } from "@/hooks/use-convex-query";
@@ -15,38 +14,24 @@ import PostCard from "@/app/community/_components/PostCard";
 
 export default function FeedPage() {
   const { user: currentUser } = useUser();
-  const [activeTab, setActiveTab] = useState("feed"); // "feed" or "trending"
+  const [activeTab, setActiveTab] = useState("feed");
 
-  // Infinite scroll detection
   const { ref: loadMoreRef } = useInView({
     threshold: 0,
     rootMargin: "100px",
   });
 
-  // Data queries
-  const { data: feedData, isLoading: feedLoading } = useConvexQuery(
-    api.feed.getFeed,
-    { limit: 15 }
-  );
-
-  const { data: suggestedUsers, isLoading: suggestionsLoading } =
-    useConvexQuery(api.feed.getSuggestedUsers, { limit: 6 });
-
-  const { data: trendingPosts, isLoading: trendingLoading } = useConvexQuery(
-    api.feed.getTrendingPosts,
-    { limit: 15 }
-  );
-
-  // Mutations
+  // DATA QUERIES PRESERVED
+  const { data: feedData, isLoading: feedLoading } = useConvexQuery(api.feed.getFeed, { limit: 15 });
+  const { data: suggestedUsers, isLoading: suggestionsLoading } = useConvexQuery(api.feed.getSuggestedUsers, { limit: 6 });
+  const { data: trendingPosts, isLoading: trendingLoading } = useConvexQuery(api.feed.getTrendingPosts, { limit: 15 });
   const toggleFollow = useConvexMutation(api.follows.toggleFollow);
 
-  // Handle follow/unfollow
   const handleFollowToggle = async (userId) => {
     if (!currentUser) {
       toast.error("Please sign in to follow users");
       return;
     }
-
     try {
       await toggleFollow.mutate({ followingId: userId });
       toast.success("Follow status updated");
@@ -55,216 +40,154 @@ export default function FeedPage() {
     }
   };
 
-  // Get current posts based on active tab
   const getCurrentPosts = () => {
     switch (activeTab) {
-      case "trending":
-        return trendingPosts || [];
-      default:
-        return feedData?.posts || [];
+      case "trending": return trendingPosts || [];
+      default: return feedData?.posts || [];
     }
   };
 
-  const isLoading =
-    feedLoading || (activeTab === "trending" && trendingLoading);
+  const isLoading = feedLoading || (activeTab === "trending" && trendingLoading);
   const currentPosts = getCurrentPosts();
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white pt-32 pb-5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Feed Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold gradient-text-primary pb-2">
-            Discover Amazing Content
-          </h1>
-          <p className="text-slate-400">
-            Stay up to date with the latest posts from creators you follow
-          </p>
+    // Shifted from #030303 to a Slate-950/900 gradient for better depth
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 pt-32 pb-10 antialiased relative overflow-hidden">
+      
+      {/* BACKGROUND DECORATION: Subtle Grid and Light Refraction */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
+           style={{ backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)`, backgroundSize: '24px 24px' }}>
+      </div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative z-10">
+        
+        {/* HEADER SECTION - High Contrast Title */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/10 pb-10 mb-10">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black tracking-tighter text-white uppercase">
+              Discover <span className="text-primary">Content</span>
+            </h1>
+            <p className="text-sm text-slate-400 font-medium max-w-md">
+              Stay up to date with the latest posts from creators you follow
+            </p>
+          </div>
+
+          {/* TAB SELECTOR - Lighter backdrop */}
+          <div className="flex bg-slate-800/50 backdrop-blur-md border border-white/10 p-1 rounded-none">
+            <button 
+              onClick={() => setActiveTab("feed")} 
+              className={`px-8 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === "feed" ? "bg-white text-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+            >
+              For You
+            </button>
+            <button 
+              onClick={() => setActiveTab("trending")} 
+              className={`px-8 py-2 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === "trending" ? "bg-white text-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+            >
+              <TrendingUp size={12} /> Trending
+            </button>
+          </div>
         </div>
 
-        {/* Main Feed */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-          <div className="lg:col-span-4 space-y-6">
-            {/* Feed Tabs */}
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => setActiveTab("feed")}
-                variant={activeTab === "feed" ? "primary" : "ghost"}
-                className="flex-1"
-              >
-                For You
-              </Button>
-              <Button
-                onClick={() => setActiveTab("trending")}
-                variant={activeTab === "trending" ? "primary" : "ghost"}
-                className="flex-1"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Trending
-              </Button>
-            </div>
-
-            {/* Create Post Prompt */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          
+          {/* MAIN FEED AREA */}
+          <div className="lg:col-span-9 space-y-8">
+            
+            {/* CREATE PROMPT - Lighter surface */}
             {currentUser && (
-              <Link
-                href="/community/dashboard/create"
-                className="flex items-center space-x-3 cursor-pointer"
-              >
-                <div className="relative w-10 h-10">
-                  {currentUser.imageUrl ? (
-                    <Image
-                      src={currentUser.imageUrl}
-                      alt={currentUser.firstName || "User"}
-                      fill
-                      className="rounded-full object-cover"
-                      sizes="40px"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-full bg-linear-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
-                      {(currentUser.firstName || "U").charAt(0).toUpperCase()}
-                    </div>
-                  )}
+              <Link href="/community/dashboard/create" className="group flex items-center gap-4 p-5 bg-slate-800/40 backdrop-blur-sm border border-white/10 hover:border-primary/50 transition-all shadow-xl">
+                <div className="relative h-10 w-10 shrink-0 border border-white/20">
+                  <Image src={currentUser.imageUrl} fill className="object-cover" alt="User" />
                 </div>
-                <div className="flex-1">
-                  <div className="bg-slate-800 border border-slate-600 rounded-full px-4 py-3 text-slate-400 hover:border-slate-500 transition-colors">
-                    What's on your mind? Share your thoughts...
-                  </div>
+                <div className="flex-1 text-slate-400 text-sm font-medium">
+                  What's on your mind? <span className="text-slate-500 italic opacity-60">Share your thoughts...</span>
+                </div>
+                <div className="p-2 bg-white/5 border border-white/10 group-hover:bg-primary group-hover:text-black transition-colors">
+                  <Plus size={18} />
                 </div>
               </Link>
             )}
 
-            {/* Posts Feed */}
             {isLoading ? (
-              <div className="flex justify-center py-12">
-                <div className="text-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-purple-400 mx-auto mb-4" />
-                  <p className="text-slate-400">Loading posts...</p>
-                </div>
+              <div className="py-20 flex flex-col items-center gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Syncing Intelligence...</p>
               </div>
             ) : currentPosts.length === 0 ? (
-              <Card className="card-glass">
-                <CardContent className="text-center py-12">
-                  <div className="space-y-4">
-                    <div className="text-6xl">📝</div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        {activeTab === "trending"
-                          ? "No trending posts right now"
-                          : "No posts to show"}
-                      </h3>
-                      <p className="text-slate-400 mb-6">
-                        {activeTab === "trending"
-                          ? "Check back later for trending content"
-                          : "Follow some creators to see their posts here"}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="py-24 text-center border border-dashed border-white/10 bg-slate-800/20">
+                <h3 className="text-white font-bold uppercase tracking-widest text-sm">
+                  {activeTab === "trending" ? "No trending data available" : "No active streams found"}
+                </h3>
+                <p className="text-slate-500 text-xs mt-2">
+                  {activeTab === "trending" ? "Check back later for trending content" : "Follow creators to populate your feed"}
+                </p>
+              </div>
             ) : (
-              <>
-                {/* Posts Grid */}
-                <div className="space-y-6">
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {currentPosts.map((post) => (
-                    <PostCard
-                      key={post._id}
-                      post={post}
-                      showActions={false}
-                      showAuthor={true}
-                      className="max-w-none"
-                    />
+                    <PostCard key={post._id} post={post} showActions={false} showAuthor={true} />
                   ))}
                 </div>
-
-                {/* Load More Indicator */}
+                
                 {activeTab === "feed" && feedData?.hasMore && (
-                  <div ref={loadMoreRef} className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
+                  <div ref={loadMoreRef} className="flex justify-center py-10">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
 
-          {/* Left Sidebar - Following */}
-          <div className="lg:col-span-2 space-y-6 mt-14">
-            {/* Suggested Users */}
-            <Card className="card-glass">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Suggested Users
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {suggestionsLoading ? (
-                  <div className="flex justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-purple-400" />
-                  </div>
-                ) : !suggestedUsers || suggestedUsers.length === 0 ? (
-                  <div className="text-center py-4">
-                    <p className="text-slate-400 text-sm">
-                      No suggestions available
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {suggestedUsers.map((user) => (
-                      <div key={user._id} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Link href={`/${user.username}`}>
-                            <div className="flex items-center space-x-3 cursor-pointer">
-                              <div className="relative w-10 h-10">
-                                {user.imageUrl ? (
-                                  <Image
-                                    src={user.imageUrl}
-                                    alt={user.name}
-                                    fill
-                                    className="rounded-full object-cover"
-                                    sizes="40px"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full rounded-full bg-linear-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
-                                    {user.name.charAt(0).toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-white">
-                                  {user.name}
-                                </p>
-                                <p className="text-xs text-slate-400">
-                                  @{user.username}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                          <Button
-                            onClick={() => handleFollowToggle(user._id)}
-                            variant="outline"
-                            size="sm"
-                            className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
-                          >
-                            <UserPlus className="h-3 w-3 mr-1" />
-                            Follow
-                          </Button>
-                        </div>
-                        <div className="text-xs text-slate-500 pl-13">
-                          {user.followerCount} followers • {user.postCount}{" "}
-                          posts
-                        </div>
-                        {user.recentPosts && user.recentPosts.length > 0 && (
-                          <div className="text-xs text-slate-400 pl-13">
-                            Latest: "
-                            {user.recentPosts[0].title.substring(0, 30)}..."
+          {/* SIDEBAR */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-6 sticky top-28 shadow-2xl">
+              <div className="flex items-center gap-2 mb-8 border-b border-white/10 pb-4 font-black uppercase text-[10px] tracking-[0.2em] text-white">
+                <Sparkles size={14} className="text-primary animate-pulse" />
+                Suggested Peers
+              </div>
+
+              {suggestionsLoading ? (
+                <div className="flex justify-center py-6"><Loader2 className="animate-spin size-5 text-slate-600" /></div>
+              ) : (
+                <div className="space-y-8">
+                  {suggestedUsers?.map((user) => (
+                    <div key={user._id} className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <Link href={`/${user.username}`} className="flex items-center gap-3 overflow-hidden group">
+                          <div className="h-9 w-9 border border-white/20 shrink-0 relative bg-slate-800">
+                            <Image src={user.imageUrl} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt={user.name} />
                           </div>
-                        )}
+                          <div className="flex flex-col truncate">
+                            <span className="text-[11px] font-bold text-white uppercase truncate group-hover:text-primary transition-colors">{user.name}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">@{user.username}</span>
+                          </div>
+                        </Link>
+                        <Button 
+                          onClick={() => handleFollowToggle(user._id)} 
+                          className="rounded-none h-7 px-4 bg-white text-black hover:bg-primary transition-all text-[9px] font-black uppercase tracking-tighter"
+                        >
+                          Link
+                        </Button>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      
+                      <div className="pl-12 space-y-1">
+                         <div className="text-[9px] text-slate-400 font-bold tracking-tight">
+                            {user.followerCount} Connects • {user.postCount} Units
+                         </div>
+                         {user.recentPosts?.[0] && (
+                           <div className="text-[9px] text-slate-500 italic line-clamp-1 border-l border-primary/30 pl-2">
+                             "{user.recentPosts[0].title}"
+                           </div>
+                         )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
