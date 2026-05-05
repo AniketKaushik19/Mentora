@@ -21,7 +21,7 @@ function Explore() {
           setCourseList(result.data);
         }
   return (
-       <div className='max-w-7xl mx-auto px-4 py-8 md:py-7 mt-5 space-y-10'>
+       <div className='max-w-7xl mx-auto px-4 py-3 md:py-6 mt-5 space-y-4'>
             
             {/* COMPACT HEADER SECTION */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

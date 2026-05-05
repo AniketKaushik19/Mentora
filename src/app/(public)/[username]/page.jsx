@@ -76,7 +76,7 @@ export default function username({ params }) {
     try {
       await toggleFollow.mutate({ followingId: user._id });
     } catch (error) {
-      toast.error(error.message || "Failed to update follow status");
+      toast.error("You can't follow yourself.");
     }
   };
 

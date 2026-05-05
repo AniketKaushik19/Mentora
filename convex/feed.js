@@ -41,108 +41,107 @@ export const getFeed =query({
 })
 
 //Get suggested users to follow
-export const getSuggestedUsers =query({
-    args:{limit:v.optional(v.number())},
-    handler:async(ctx , args)=>{
-        const identity=await ctx.auth.getUserIdentity();
-        const limit=args.limit || 10;
+export const getSuggestedUsers = query({
+    args: { limit: v.optional(v.number()) },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        const limit = args.limit || 10;
 
-        let currentUser=null;
-        let followedUserIds=[]
+        let currentUser = null;
+        let excludeUserIds = []; // Ismein wo IDs hongi jo humein nahi dikhani
 
-        if(identity){
-            currentUser=await ctx.db
-             .query("users")
-             .filter((q)=>
-              q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier)
-            )
-            .unique()
-        
-            if(currentUser){
-                //Get users already being followed
-                const follows=await ctx.db
-                  .query("follows")
-                  .filter((q)=>q.eq(q.field("followerId"), currentUser._id))
-                  .collect()
+        if (identity) {
+            currentUser = await ctx.db
+                .query("users")
+                .withIndex("by_token", (q) =>
+                    q.eq("tokenIdentifier", identity.tokenIdentifier)
+                )
+                .unique();
 
-                followedUserIds=follows.map((follow)=>follow.followerId)
+            if (currentUser) {
+                // 1. Khud ki ID ko exclude list mein daalein
+                excludeUserIds.push(currentUser._id);
+
+                // Get users already being followed
+                const follows = await ctx.db
+                    .query("follows")
+                    .filter((q) => q.eq(q.field("followerId"), currentUser._id))
+                    .collect();
+
+                // 2. Jinhe follow kar rakha hai unki IDs bhi exclude list mein daalein
+                const followedIds = follows.map((follow) => follow.followingId);
+                excludeUserIds = [...excludeUserIds, ...followedIds];
             }
         }
 
-        //Get users with recent post who aren't being followed
-        const allUsers=await ctx.db
-         .query("users")
-         .filter((q)=>q.eq(q.field("_id"), currentUser?._id  || ""))
-         .collect()
+        // Get users who are NOT in our exclude list (Not current user and not already followed)
+        const allUsers = await ctx.db
+            .query("users")
+            .collect();
 
-         //Filter out already followed users and get their stats
-         const suggestions=await Promise.all(
-            allUsers.filter(
-                (user)=>!followedUserIds.includes(user._id) && user.username
-            ).map(async (user) => {
-                //Get user's published posts
-                const post =await ctx.db
-                .query("posts")
-                .filter((q)=>
-                 q.and(q.eq(q.field("authorId"),user._id),
-            q.eq(q.field("status"), "published"))
-                )
-                .order("desc")
-                .take(5)
+        // Filter: excludeUserIds mein current user aur followed users dono hain
+        const filteredUsers = allUsers.filter((user) => 
+            !excludeUserIds.includes(user._id) && user.username
+        );
 
-                //Get follower count
-                const followers=await ctx.db
-                .query("follows")
-                .filter((q)=>q.eq(q.field("followerId"),user._id))
-                .collect()
+        // Map data and get stats
+        const suggestions = await Promise.all(
+            filteredUsers.map(async (user) => {
+                // Get user's published posts
+                const post = await ctx.db
+                    .query("posts")
+                    .filter((q) =>
+                        q.and(
+                            q.eq(q.field("authorId"), user._id),
+                            q.eq(q.field("status"), "published")
+                        )
+                    )
+                    .collect();
 
-                //Calculate engagement score for ranking
-                const totalViews =post.reduce(
-                    (sum , post )=>sum+post.likeCount,0
-                )
-                const totalLikes=post.reduce((sum , post )=>sum+post.likeCount,0)
+                // Get follower count
+                const followers = await ctx.db
+                    .query("follows")
+                    .filter((q) => q.eq(q.field("followingId"), user._id))
+                    .collect();
 
-                const engagementScore=totalLikes+totalViews*5 + followers.length*10
-
+                const totalViews = post.reduce((sum, p) => sum + (p.viewCount || 0), 0);
+                const totalLikes = post.reduce((sum, p) => sum + (p.likeCount || 0), 0);
+                const engagementScore = totalLikes + totalViews * 5 + followers.length * 10;
 
                 return {
-                    _id:user._id,
-                    name:user.name,
-                    username:user.username,
-                    imageUrl:user.imageUrl,
-                    followerCount:followers.length,
-                    postCount:post.length,
+                    _id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    imageUrl: user.imageUrl,
+                    followerCount: followers.length,
+                    postCount: post.length,
                     engagementScore,
-                    lastPostAt:post.length > 0 ? post[0].publishedAt :null,
-                    recentPosts:post.slice(0,2).map((post)=>({
-                        _id:post._id,
-                        title:post.title,
-                        viewCount:post.viewCount,
-                        likeCount:post.likeCount,
+                    lastPostAt: post.length > 0 ? post[0].publishedAt : null,
+                    recentPosts: post.slice(0, 2).map((p) => ({
+                        _id: p._id,
+                        title: p.title,
+                        viewCount: p.viewCount,
+                        likeCount: p.likeCount,
                     }))
-                }
+                };
             })
-         )
+        );
+        // Sort by engagement score and activity, then apply limit
+        return suggestions
+            .filter((user) => user.postCount > 0) // Sirf active creators dikhayein
+            .sort((a, b) => {
+                const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+                const aRecent = (a.lastPostAt || 0) > oneWeekAgo;
+                const bRecent = (b.lastPostAt || 0) > oneWeekAgo;
 
-         //Sort by engagement score and recent acitvity
-         const rankedSuggestions = suggestions
-         .filter((user)=>user.postCount>0) //Only users with posts 
-         .sort((a,b)=>{
-            //Prioritize recent activity
-            const aRecent=a.lastPostAt >Date.now()-7*24*60*60*1000
-            const bRecent=b.lastPostAt >Date.now()-7*24*60*60*1000
+                if (aRecent && !bRecent) return -1;
+                if (!aRecent && bRecent) return 1;
 
-            if(aRecent && !bRecent) return -1
-            if(!aRecent && bRecent) return -1
-
-            //Then by engagement score
-            return b.engagementScore -a.engagementScore
-         })
-         .slice(0 , limit)
-
-         return rankedSuggestions
+                return b.engagementScore - a.engagementScore;
+            })
+            .slice(0, limit);
     }
-})
+});
 
 //Get trending posts (high engagement in last 7 days)
 export const getTrendingPosts =query({

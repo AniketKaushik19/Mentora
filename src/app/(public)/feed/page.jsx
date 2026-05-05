@@ -148,7 +148,6 @@ export default function FeedPage() {
                 <Sparkles size={14} className="text-primary animate-pulse" />
                 Suggested Peers
               </div>
-
               {suggestionsLoading ? (
                 <div className="flex justify-center py-6"><Loader2 className="animate-spin size-5 text-slate-600" /></div>
               ) : (

@@ -24,11 +24,11 @@ function WelcomeBanner() {
 
           <div className='space-y-1'>
             <h2 className='font-black text-2xl md:text-3xl tracking-tight text-white'>
-              Mentora <span className='text-slate-500 font-medium italic px-1'>//</span> 
+              Mentora <span className='text-slate-500 font-medium italic px-1'></span> 
               <span className='bg-gradient-to-r from-white via-slate-200 to-slate-500 bg-clip-text text-transparent'> Intelligence Dashboard</span>
             </h2>
             <p className='text-slate-400 text-xs md:text-sm font-medium leading-relaxed max-w-lg'>
-              Deploying AI-driven learning protocols to architect your professional career path. 
+              Deploying AI-driven learningCourses to architect your professional career path. 
               Integrated logic for real-time skill acquisition.
             </p>
           </div>

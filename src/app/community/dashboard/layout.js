@@ -37,8 +37,8 @@ const sidebarItems = [
     icon: Rss,
   },
   {
-    title: "AI Career",
-    href: "/#",
+    title: "AI Tools",
+    href: "/ai-tools",
     icon: ToolCase,
   },
   {
@@ -55,7 +55,7 @@ const DashboardLayout = ({children}) => {
   return (
     <div className='min-h-screen bg-slate-900 text-white'>
         {/* //mobile sidebar */}
-        <aside className={cn("fixed top-0 left-0 h-full w-64 bg-slate-800/50 backdrop-blur-sm border-r border-slate-700 z-50 transition-transform duration-300 lg:translate-x-0",isSidebarOpen?"translate-x-0":"-translate-x-full")}>
+        <aside className={cn("fixed top-0 left-0 h-full w-64 bg-slate-800/80 backdrop-blur-sm border-r border-slate-700 z-50 transition-transform duration-300 lg:translate-x-0",isSidebarOpen?"translate-x-0":"-translate-x-full")}>
             <div className='flex items-center justify-between p-5 border-b border-slate-700'>
                 <Link href={"/community"} className='shrink-0'>
                   {/* <Image 

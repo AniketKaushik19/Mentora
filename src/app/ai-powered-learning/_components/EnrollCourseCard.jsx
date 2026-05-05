@@ -99,7 +99,7 @@ function EnrollCourseCard({ course, enrollCourse }) {
         <Link href={`/ai-powered-learning/view-course/${course?.cid}`} className="w-full">
           <Button className="w-full h-12 cursor-pointer bg-white text-black hover:bg-slate-200 transition-all rounded-none font-black text-xs uppercase tracking-[0.3em] gap-3 shadow-white/5 active:scale-[0.98]">
             <Terminal className="h-4 w-4 stroke-[3px]" />
-            Resume Protocol
+            ResumeCourse
           </Button>
         </Link>
       </div>

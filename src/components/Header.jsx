@@ -77,26 +77,10 @@ const Header = () => {
 
         {/* Actions */}
         <div className='flex items-center gap-2 shrink-0'>
-          
-          {/* Theme Toggle Button */}
-          {/* {mounted && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full w-9 h-9 hover:bg-black/5 dark:hover:bg-white/5"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-[1.1rem] w-[1.1rem] text-amber-400 rotate-0 scale-100 transition-all" />
-              ) : (
-                <Moon className="h-[1.1rem] w-[1.1rem] text-slate-700 rotate-0 scale-100 transition-all" />
-              )}
-            </Button>
-          )} */}
-
+        
           <Authenticated>
             <Link href={"/community/dashboard"}>
-              <Button variant="outline" size="sm" className="hidden md:flex rounded-full border-black/10 dark:border-white/10 font-bold text-xs uppercase">
+              <Button variant="outline" size="sm" className="flex rounded-full border-black/10 dark:border-white/10 font-bold text-xs uppercase">
                 <LayoutDashboard className='h-3.5 w-3.5 mr-2'/>
                 Dashboard
               </Button>

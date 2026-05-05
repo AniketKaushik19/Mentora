@@ -4,7 +4,7 @@ import EnrollCourseList from '../_components/EnrollCourseList'
 
 function MyLearning() {
   return (
-    <div className='mt-20'>
+    <div className='mt-10 md:mt-20'>
         <WelcomeBanner/>
       <h2 className='font-bold text-2xl mt-5'>My Learning</h2>
       <EnrollCourseList/>

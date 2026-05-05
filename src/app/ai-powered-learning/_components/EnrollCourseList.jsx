@@ -90,7 +90,7 @@ function EnrollCourseList() {
                 <LayoutGrid className="w-8 h-8 text-slate-700" />
             </div>
             <div className="space-y-1">
-                <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-[11px]">No Active Protocols</p>
+                <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-[11px]">No ActiveCourses</p>
                 <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">Initialise a new track from the command console.</p>
             </div>
           </div>

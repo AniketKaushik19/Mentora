@@ -49,16 +49,7 @@ function Course() {
                     />
                 )}
 
-                {/* ── Mobile toggle button ───────────────────────── */}
-                <button
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="fixed bottom-5 right-5 z-30 md:hidden w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center shadow-xl shadow-purple-900/50 border border-purple-500/40 text-white hover:scale-110 active:scale-95 transition-transform"
-                    aria-label="Toggle sidebar"
-                >
-                    {sidebarOpen ? <X className='w-5 h-5' /> : <Menu className='w-5 h-5' />}
-                </button>
-
-                {/* ── Sidebar ────────────────────────────────────── */}
+                               {/* ── Sidebar ────────────────────────────────────── */}
                 <div className={`
                     fixed md:static inset-y-0 left-0 z-30 md:z-auto
                     transform transition-transform duration-300 ease-in-out
@@ -72,12 +63,14 @@ function Course() {
                 </div>
 
                 {/* ── Content ────────────────────────────────────── */}
-                <div className='flex-1 overflow-y-auto'>
-                    <ChapterContent
-                        courseInfo={courseInfo}
-                        refreshData={() => GetEnrollCourseById()}
-                    />
-                </div>
+<div className='flex-1 overflow-y-auto'>
+    <ChapterContent
+        courseInfo={courseInfo}
+        refreshData={() => GetEnrollCourseById()}
+        // FIX: Pass the state setter function here
+        setOpenSidebar={setSidebarOpen} 
+    />
+</div>
             </div>
         </SelectedChapterIndexProvider>
     )

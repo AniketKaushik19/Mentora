@@ -161,7 +161,7 @@ function AddNewCourseDialog({ children }) {
                     <Loader2Icon className="animate-spin w-4 h-4" />
                   ) : (
                     <>
-                      <Terminal className="w-4 h-4" /> Generate Protocol
+                      <Terminal className="w-4 h-4" /> GenerateCourse
                     </>
                   )}
                 </Button>

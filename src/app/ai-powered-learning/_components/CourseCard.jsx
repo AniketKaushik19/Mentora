@@ -19,10 +19,10 @@ function CourseCard({ course }) {
         courseId: course?.cid
       });
       if (result.data.resp) {
-        toast.warning('Neural Link already established');
+        toast.warning('Already Enrolled');
         return;
       }
-      toast.success('Protocol Initiated: Successfully Enrolled');
+      toast.success('Successfully Enrolled');
     } catch (e) {
       toast.error('System error, please retry');
     } finally {
@@ -90,7 +90,7 @@ function CourseCard({ course }) {
                     disabled={loading}
                 >
                     {loading ? <Loader2 className='animate-spin w-4 h-4' /> : <Terminal className="w-4 h-4 stroke-[3px]" />}
-                    {loading ? 'Linking...' : 'Enroll Protocol'}
+                    {loading ? 'Enrolling...' : 'Enroll Course'}
                 </Button>
             ) : (
                 <Link href={'/ai-powered-learning/edit-course/' + course?.cid} className="w-full">
